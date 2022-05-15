@@ -1,0 +1,18 @@
+image: maven:latest
+
+stages:
+  - build
+cache:
+  key: cache-for-my-task-${CI_COMMIT_REF_SLUG}
+  paths:
+    - .m2/
+build-job:
+  stage: build
+  script:
+    - echo "Compiling the code..."
+    - mvn clean install
+
+
+
+
+

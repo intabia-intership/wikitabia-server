@@ -1,6 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE users(
+CREATE TABLE IF NOT EXISTS users(
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     first_name VARCHAR,
     last_name VARCHAR,
@@ -9,13 +9,13 @@ CREATE TABLE users(
     telegram_login VARCHAR UNIQUE
 );
 
-CREATE TABLE tags(
+CREATE TABLE IF NOT EXISTS tags(
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR UNIQUE,
     rating_count BIGINT DEFAULT 0
 );
 
-CREATE TABLE resources(
+CREATE TABLE IF NOT EXISTS resources(
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR NOT NULL,
     url VARCHAR NOT NULL UNIQUE,
@@ -25,7 +25,7 @@ CREATE TABLE resources(
     FOREIGN KEY (creator_id) REFERENCES users (id) ON DELETE SET NULL
 );
 
-CREATE TABLE tags_resources(
+CREATE TABLE IF NOT EXISTS tags_resources(
     tag_id UUID,
     resource_id UUID,
     FOREIGN KEY (tag_id) REFERENCES tags (id) ON DELETE CASCADE,

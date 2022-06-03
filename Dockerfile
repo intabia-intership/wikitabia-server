@@ -1,5 +1,9 @@
-FROM tomcat:9.0.55-jdk11-openjdk
-ENV DB_CONNECT_URL="jdbc:postgresql://172.18.0.3/wikitabia"
-COPY target/wikitabia.war webapps/wikitabia.war
+FROM openjdk:11-jdk-slim
+
+COPY ./target/wikitabia.jar wikitabia.jar
+
 EXPOSE 8080
-ENTRYPOINT ["catalina.sh", "run"]
+
+ENTRYPOINT ["java", "-jar", "wikitabia.jar"]
+
+# docker build . -t wikitabia

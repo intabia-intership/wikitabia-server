@@ -24,14 +24,12 @@ services:
       spring.datasource.url: "jdbc:postgresql://postgres:${DB_PORT}/${DB_NAME}"
       spring.datasource.username: ${DB_USER}
       spring.datasource.password: ${DB_PASS}
-      #JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     depends_on:
       - postgres
     networks:
       wikitabia:
     ports:
       - "8080:8080"
-      #- "5005:5005"
 
 volumes:
   postgres:

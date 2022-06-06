@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class DefaultTest {
 
   @Test
-  void test() {
+  void whenContextLoad__thenSuccess() {
     System.out.println("Тестируем...");
   }
 }

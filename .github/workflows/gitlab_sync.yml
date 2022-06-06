@@ -2,7 +2,7 @@ name: GitlabSync
 
 on:
   push:
-    branches-ignore:
+    branches:
       - main
 
 jobs:

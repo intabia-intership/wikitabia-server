@@ -17,7 +17,7 @@ services:
       - "${DB_PORT}:5432"
 
   wikitabia-server:
-    image: ${WIKITABIA_SERVER_IMAGE_NAME}:${WIKITABIA_SERVER_IMAGE_TAG}
+    image: ${REGISTRY_URL}/${WIKITABIA_SERVER_REPO}/${WIKITABIA_SERVER_IMAGE_NAME}:${WIKITABIA_SERVER_IMAGE_TAG}
     container_name: wikitabia-server
     restart: always
     environment:
@@ -29,7 +29,7 @@ services:
     networks:
       wikitabia:
     ports:
-      - "8080:8080"
+      - "${WIKITABIA_SERVER_OUTER_PORT}:8080"
 
 volumes:
   postgres:

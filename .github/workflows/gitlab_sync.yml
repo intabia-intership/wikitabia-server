@@ -2,8 +2,8 @@ name: GitlabSync
 
 on:
   push:
-    branches-ignore:
-      - main
+    branches:
+      - develop
 
 jobs:
   sync:

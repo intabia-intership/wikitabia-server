@@ -37,6 +37,6 @@ public class UserEntity {
   @Column(name = "password")
   private String password;
 
-  @Column(name = "telegram_username")
+  @Column(name = "telegram_login")
   private String telegramLogin;
 }

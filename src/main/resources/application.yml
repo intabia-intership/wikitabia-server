@@ -14,3 +14,7 @@ spring:
     init:
       schema-locations: classpath:init.sql
       mode: always
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST}
+    username: ${SPRING_RABBITMQ_USERNAME}
+    password: ${SPRING_RABBITMQ_PASSWORD}

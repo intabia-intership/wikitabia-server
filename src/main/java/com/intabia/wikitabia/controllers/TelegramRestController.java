@@ -19,6 +19,13 @@ public class TelegramRestController {
   private ResourceService resourceService;
   private TagsService tagsService;
 
+  /**
+   * @deprecated
+   * Метод не используется так как синнхронные запросы были заменены на ассинхронные
+   * @param resource получаемый ресурс
+   * @return сохраненый ресурс
+   */
+  @Deprecated
   @PostMapping(value = "/telegram/resource/create",
       consumes = "application/json", produces = "application/json")
   public ResourceDto createResourceByTelegram(@RequestBody ResourceDto resource) {

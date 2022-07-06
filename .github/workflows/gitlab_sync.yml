@@ -1,7 +1,9 @@
 name: GitlabSync
 
 on:
-  - push
+  push:
+    branches:
+      - main
 
 jobs:
   sync:

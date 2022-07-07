@@ -14,26 +14,26 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
-@Component
-@RequiredArgsConstructor
-public class RegistrationFilter extends GenericFilterBean {
-  @NonNull
-  private final UserService userService;
-
-  @Override
-  public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
-                       FilterChain filterChain) throws IOException, ServletException {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String login = null;
-    if (authentication != null && authentication.isAuthenticated()) {
-      login = authentication.getName();
-    }
-    if (login != null) {
-      UserDto user = userService.findUserByLogin(login);
-      if (user == null) {
-        userService.createUser(UserDto.builder().login(login).build());
-      }
-    }
-    filterChain.doFilter(servletRequest, servletResponse);
-  }
-}
+//@Component
+//@RequiredArgsConstructor
+//public class RegistrationFilter extends GenericFilterBean {
+//  @NonNull
+//  private final UserService userService;
+//
+//  @Override
+//  public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
+//                       FilterChain filterChain) throws IOException, ServletException {
+//    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//    String login = null;
+//    if (authentication != null && authentication.isAuthenticated()) {
+//      login = authentication.getName();
+//    }
+//    if (login != null) {
+//      UserDto user = userService.findUserByLogin(login);
+//      if (user == null) {
+//        userService.createUser(UserDto.builder().login(login).build());
+//      }
+//    }
+//    filterChain.doFilter(servletRequest, servletResponse);
+//  }
+//}

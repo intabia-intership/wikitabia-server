@@ -1,11 +1,8 @@
 package com.intabia.wikitabia.entities;
 
 import java.util.UUID;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,6 +34,10 @@ public class UserEntity {
   @Column(name = "password")
   private String password;
 
-  @Column(name = "telegram_username")
+  @Column(name = "telegram_login")
   private String telegramLogin;
+
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "authority_id")
+  private AuthorityEntity authority;
 }

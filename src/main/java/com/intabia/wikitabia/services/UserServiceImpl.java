@@ -1,5 +1,7 @@
 package com.intabia.wikitabia.services;
 
+import com.intabia.wikitabia.dao.AuthoritiesDao;
+import com.intabia.wikitabia.entities.AuthorityEntity;
 import com.intabia.wikitabia.exceptions.DataAccessException;
 import com.intabia.wikitabia.mappers.UsersMapper;
 
@@ -7,6 +9,7 @@ import java.util.UUID;
 
 import com.intabia.wikitabia.exceptions.CustomException;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.intabia.wikitabia.dao.UsersDao;
@@ -23,22 +26,28 @@ import com.intabia.wikitabia.services.interfaces.UserService;
 public class UserServiceImpl implements UserService {
   private final UsersMapper usersMapper;
   private final UsersDao usersDao;
-  private final HashService hashService;
+  private final AuthoritiesDao authoritiesDao;
+  private final PasswordEncoder passwordEncoder;
 
   @Override
   public UserDto createUser(UserDto userDto) {
+    AuthorityEntity authority = authoritiesDao.findAuthorityEntityByName(userDto.getAuthority().getName())
+            .orElseThrow(() -> new DataAccessException("Роль не найдена"));
     UserEntity userEntity = usersMapper.dtoToEntity(userDto);
-    String hashedPassword = hashService.hashPassword(userEntity.getPassword());
-    userEntity.setPassword(hashedPassword);
+    userEntity.setAuthority(authority);
+    String encodedPassword = passwordEncoder.encode(userEntity.getPassword());
+    userEntity.setPassword(encodedPassword);
     return usersMapper.entityToDto(usersDao.save(userEntity));
   }
 
   @Override
   public UserDto updateUser(UserDto userDto) {
+    AuthorityEntity authority = authoritiesDao.findAuthorityEntityByName(userDto.getAuthority().getName())
+            .orElseThrow(() -> new DataAccessException("Роль не найдена"));
     UserEntity userEntity = usersMapper.dtoToEntity(userDto);
-    String password = userEntity.getPassword();
-    String hashPassword = hashService.hashPassword(password);
-    userEntity.setPassword(hashPassword);
+    userEntity.setAuthority(authority);
+    String encodedPassword = passwordEncoder.encode(userEntity.getPassword());
+    userEntity.setPassword(encodedPassword);
     return usersMapper.entityToDto(usersDao.save(userEntity));
   }
 
@@ -57,7 +66,6 @@ public class UserServiceImpl implements UserService {
   public UserDto getUser(UUID id) {
     UserEntity userEntity = usersDao.findById(id)
         .orElseThrow(() -> new DataAccessException("Пользователь не найден"));
-    ;
     return usersMapper.entityToDto(userEntity);
   }
 
@@ -70,8 +78,8 @@ public class UserServiceImpl implements UserService {
    */
   @Override
   public UserDto authorisation(String userLogin, String password) {
-    String hashedPassword = hashService.hashPassword(password);
-    UserEntity user = usersDao.findUsersEntityByLoginAndPassword(userLogin, hashedPassword)
+    String encodedPassword = passwordEncoder.encode(password);
+    UserEntity user = usersDao.findUsersEntityByLoginAndPassword(userLogin, encodedPassword)
         .orElseThrow(() -> new CustomException("Ошибка авторизации"));
     return usersMapper.entityToDto(user);
   }

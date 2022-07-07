@@ -1,12 +1,19 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+CREATE TABLE IF NOT EXISTS authorities(
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR NOT NULL UNIQUE
+);
+
 CREATE TABLE IF NOT EXISTS users(
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     first_name VARCHAR,
     last_name VARCHAR,
     login VARCHAR NOT NULL UNIQUE,
-    password BIGINT,
-    telegram_login VARCHAR UNIQUE
+    password VARCHAR NOT NULL,
+    telegram_login VARCHAR UNIQUE,
+    authority_id UUID NOT NULL,
+    FOREIGN KEY (authority_id) REFERENCES authorities (id)
 );
 
 CREATE TABLE IF NOT EXISTS tags(

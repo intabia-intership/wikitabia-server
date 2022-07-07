@@ -7,7 +7,7 @@ import com.intabia.wikitabia.dto.UserDto;
 /**
  * маппер сущностей user.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {AuthoritiesMapper.class})
 public interface UsersMapper {
 
   UserEntity dtoToEntity(UserDto userDto);

@@ -1,55 +1,90 @@
 package com.intabia.wikitabia.configuration;
 
+import com.intabia.wikitabia.filter.IgnoreBasicAuthRequestHeaderRequestMatcher;
 import com.intabia.wikitabia.services.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
+import org.keycloak.OAuth2Constants;
+import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
+import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
+import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
+import org.keycloak.adapters.springsecurity.filter.KeycloakAuthenticationProcessingFilter;
+import org.keycloak.adapters.springsecurity.filter.QueryParamPresenceRequestMatcher;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.savedrequest.NullRequestCache;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 /**
- * класс конфигурации аутентификации и авторизации
+ * класс конфигурации авторизации и аутентификации с помощью keycloak и basic auth.
  */
-@Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(
-        prePostEnabled = true
-)
+@KeycloakConfiguration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @AllArgsConstructor
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     private static final String REGISTRATION_URL = "/api/user";
     private static final String TELEGRAM_LOGIN_URL = "/api/telegram-login";
+    private static final String DEFAULT_LOGIN_URL = "/sso/login";
 
-    private UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
+    private final PasswordEncoder passwordEncoder;
+
+    @Bean
+    @Override
+    protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+        return new NullAuthenticatedSessionStrategy();
+    }
+
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        SimpleAuthorityMapper grantedAuthorityMapper = new SimpleAuthorityMapper();
+        grantedAuthorityMapper.setPrefix("ROLE_");
+
+        KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
+        keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(grantedAuthorityMapper);
+        auth.authenticationProvider(keycloakAuthenticationProvider);
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-            .authorizeRequests()
-                .antMatchers(HttpMethod.POST, REGISTRATION_URL).permitAll()
-                .antMatchers(TELEGRAM_LOGIN_URL).permitAll()
-                .anyRequest().authenticated()
-                .and()
-            .httpBasic()
-                .and()
-            .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    }
-
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        super.configure(http);
+        http
+                .csrf().disable()
+                .cors().disable()
+                .authorizeRequests()
+                    .antMatchers(HttpMethod.POST, REGISTRATION_URL).permitAll()
+                    .antMatchers(TELEGRAM_LOGIN_URL).permitAll()
+                    .anyRequest().authenticated()
+                    .and()
+                .httpBasic()
+                    .and()
+                .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and()
+                .requestCache()
+                    .requestCache(new NullRequestCache());
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    @Override
+    protected KeycloakAuthenticationProcessingFilter keycloakAuthenticationProcessingFilter() throws Exception {
+        RequestMatcher requestMatcher =
+                new OrRequestMatcher(
+                        new AntPathRequestMatcher(DEFAULT_LOGIN_URL),
+                        new QueryParamPresenceRequestMatcher(OAuth2Constants.ACCESS_TOKEN),
+                        new IgnoreBasicAuthRequestHeaderRequestMatcher()
+                );
+        return new KeycloakAuthenticationProcessingFilter(authenticationManagerBean(), requestMatcher);
     }
 }

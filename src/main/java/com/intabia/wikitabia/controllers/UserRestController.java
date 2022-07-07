@@ -4,7 +4,8 @@ import com.intabia.wikitabia.dto.CreateUserDto;
 import com.intabia.wikitabia.dto.UpdateUserDto;
 import com.intabia.wikitabia.dto.UserDto;
 import com.intabia.wikitabia.services.service.UserService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,32 +20,62 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserRestController {
-  private UserService userService;
+  private final UserService userService;
 
+  /**
+   * получение пользователя по id.
+   *
+   * @param id - id пользователя
+   * @return возвращает найденного пользователя
+   */
   @GetMapping("/user/{id}")
   public UserDto getUser(@PathVariable UUID id) {
     return userService.getUser(id);
   }
 
+  /**
+   * удаление пользователя по id.
+   *
+   * @param id - id пользователя
+   * @return возвращает id удаленного пользователя
+   */
   @DeleteMapping("/user/{id}")
   public String deleteUser(@PathVariable UUID id) {
     userService.deleteUser(id);
     return "User was deleted";
   }
 
-  @PutMapping(value = "/user/{id}", consumes = "application/json", produces = "application/json")
+  /**
+   * модификация пользователя по id.
+   *
+   * @param updateUserDto - новый пользователь
+   * @param id - id пользователя
+   * @return возвращает измененного пользователя
+   */
+  @PutMapping(value = "/user/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public UserDto updateUser(@RequestBody @Valid UpdateUserDto updateUserDto, @PathVariable UUID id) {
     return userService.updateUser(updateUserDto, id);
   }
 
-  @PostMapping(value = "/user", consumes = "application/json", produces = "application/json")
+  /**
+   * создание нового пользователя.
+   *
+   * @param createUserDto - создаваемый пользователь
+   * @return возвращает созданного пользователя
+   */
+  @PostMapping(value = "/user", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public UserDto createUser(@RequestBody @Valid CreateUserDto createUserDto) {
     return userService.createUser(createUserDto);
   }
 
-  @PutMapping(value = "/telegram-login", consumes = "application/json", produces = "application/json")
+  /**
+   * назачение пользователю telegram-логина.
+   *
+   * @param user - пользователь, которому необходимо назначить telegram-логин
+   */
+  @PutMapping(value = "/telegram-login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public void addTelegramLogin(@RequestBody UserDto user) {
     userService.addLogin(user);
 

@@ -11,6 +11,8 @@ jobs:
     environment: wikitabia-dev
     runs-on: [self-hosted]
     steps:
+      - run: echo "Print all environment variables"
+      - run: env
       - name: Login to Docker registry
         uses: docker/login-action@v1
         with:

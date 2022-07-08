@@ -34,4 +34,5 @@ jobs:
             echo DB_PASS=${{secrets.DB_PASS}} >> wikiserver/deployment/.env
             echo DB_NAME=${{secrets.DB_NAME}} >> wikiserver/deployment/.env
             echo DB_PORT=${{secrets.DB_PORT}} >> wikiserver/deployment/.env
+            echo DB_PORT_2=${{secrets.DB_PORT}} >> wikiserver/deployment/.env
             cd wikiserver/deployment && docker compose up -d

@@ -27,7 +27,7 @@ jobs:
           pass: ${{secrets.DEV_HOST_PASSWORD}}
           run: |
             docker rmi ${{secrets.DOCKER_REGISTRY_URL}}/${{secrets.DOCKER_REGISTRY_REPO}}/${{secrets.DOCKER_REGISTRY_IMAGE}}:${{secrets.DOCKER_REGISTRY_IMAGE_TAG_DEV}}
-            echo WIKITABIA_SERVER_OUTER_PORT=${{secrets.WIKITABIA_SERVER_OUTER_PORT}} > wikiserver/deployment/.env
+            echo WIKITABIA_SERVER_OUTER_PORT=${{secrets.DB_USER}} > wikiserver/deployment/.env
             echo REGISTRY_URL=${{secrets.DOCKER_REGISTRY_URL}} >> wikiserver/deployment/.env
             echo WIKITABIA_SERVER_REPO=${{secrets.DOCKER_REGISTRY_REPO}} >> wikiserver/deployment/.env
             echo WIKITABIA_SERVER_IMAGE_NAME=${{secrets.DOCKER_REGISTRY_IMAGE}} >> wikiserver/deployment/.env

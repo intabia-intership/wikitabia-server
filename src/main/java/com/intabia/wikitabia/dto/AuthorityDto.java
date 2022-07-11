@@ -6,16 +6,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import java.util.UUID;
 
+/**
+ * dto класс для передачи сущности authority между frontend и backend.
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthorityDto {
-
-    private UUID id;
-
+    /**
+     * название authority.
+     */
     @NotBlank
     private String name;
 }

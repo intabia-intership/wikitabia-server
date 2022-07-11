@@ -1,13 +1,13 @@
 package com.intabia.wikitabia.services;
 
-import com.intabia.wikitabia.dao.ResourcesDao;
-import com.intabia.wikitabia.dao.TagsDao;
-import com.intabia.wikitabia.dao.UsersDao;
+import com.intabia.wikitabia.repository.ResourcesDao;
+import com.intabia.wikitabia.repository.TagsDao;
+import com.intabia.wikitabia.repository.UsersDao;
 import com.intabia.wikitabia.dto.ResourceDto;
 import com.intabia.wikitabia.exceptions.CustomException;
 import com.intabia.wikitabia.mappers.ResourcesMapper;
 import com.intabia.wikitabia.services.Specifications.ResourcesQuerySpecifications;
-import com.intabia.wikitabia.services.interfaces.ResourceService;
+import com.intabia.wikitabia.services.service.ResourceService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -19,8 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.intabia.wikitabia.entities.ResourceEntity;
-import com.intabia.wikitabia.entities.UserEntity;
+import com.intabia.wikitabia.model.ResourceEntity;
+import com.intabia.wikitabia.model.UserEntity;
 
 /**
  * реализация сервисного слоя для resources.

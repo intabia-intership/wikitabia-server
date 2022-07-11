@@ -1,4 +1,4 @@
-package com.intabia.wikitabia.services.interfaces;
+package com.intabia.wikitabia.services.service;
 
 import com.intabia.wikitabia.dto.TagDto;
 import java.util.List;

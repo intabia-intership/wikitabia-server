@@ -1,6 +1,6 @@
 package com.intabia.wikitabia.mappers;
 
-import com.intabia.wikitabia.entities.ResourceEntity;
+import com.intabia.wikitabia.model.ResourceEntity;
 import org.mapstruct.Mapper;
 import com.intabia.wikitabia.dto.ResourceDto;
 

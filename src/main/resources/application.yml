@@ -7,9 +7,12 @@ spring:
     username: postgres
     password: postgres
   jpa:
+    generate-ddl: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQL10Dialect
+    hibernate:
+      ddl-auto: validate
   sql:
     init:
       schema-locations: classpath:init.sql

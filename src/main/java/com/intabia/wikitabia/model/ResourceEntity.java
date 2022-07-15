@@ -1,7 +1,7 @@
-package com.intabia.wikitabia.entities;
+package com.intabia.wikitabia.model;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import lombok.Data;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +13,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import lombok.Data;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Entity для работы с resources.
@@ -44,7 +45,7 @@ public class ResourceEntity {
   @JoinColumn(name = "creator_id")
   private UserEntity creator;
 
-  @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @JoinTable(name = "tags_resources",
       joinColumns = @JoinColumn(name = "resource_id"),
       inverseJoinColumns = @JoinColumn(name = "tag_id"))

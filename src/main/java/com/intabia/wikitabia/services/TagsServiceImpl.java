@@ -1,10 +1,10 @@
 package com.intabia.wikitabia.services;
 
-import com.intabia.wikitabia.dao.TagsDao;
+import com.intabia.wikitabia.repository.TagsDao;
 import com.intabia.wikitabia.dto.TagDto;
 import com.intabia.wikitabia.exceptions.CustomException;
 import com.intabia.wikitabia.mappers.TagsMapper;
-import com.intabia.wikitabia.services.interfaces.TagsService;
+import com.intabia.wikitabia.services.service.TagsService;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -17,7 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.intabia.wikitabia.entities.TagEntity;
+import com.intabia.wikitabia.model.TagEntity;
 
 /**
  * реализация сервиса для работы с сущностями tags.

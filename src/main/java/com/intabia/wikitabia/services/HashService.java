@@ -7,7 +7,6 @@ import javax.xml.bind.DatatypeConverter;
 import com.intabia.wikitabia.exceptions.CustomException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 

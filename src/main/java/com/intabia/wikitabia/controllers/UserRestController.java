@@ -1,9 +1,9 @@
 package com.intabia.wikitabia.controllers;
 
-import java.util.UUID;
-import javax.validation.Valid;
-
-import com.intabia.wikitabia.services.interfaces.UserService;
+import com.intabia.wikitabia.dto.CreateUserDto;
+import com.intabia.wikitabia.dto.UpdateUserDto;
+import com.intabia.wikitabia.dto.UserDto;
+import com.intabia.wikitabia.services.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.intabia.wikitabia.dto.UserDto;
+
+import javax.validation.Valid;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
@@ -32,14 +34,14 @@ public class UserRestController {
     return "User was deleted";
   }
 
-  @PutMapping(value = "/user", consumes = "application/json", produces = "application/json")
-  public UserDto updateUser(@RequestBody @Valid UserDto userDto) {
-    return userService.updateUser(userDto);
+  @PutMapping(value = "/user/{id}", consumes = "application/json", produces = "application/json")
+  public UserDto updateUser(@RequestBody @Valid UpdateUserDto updateUserDto, @PathVariable UUID id) {
+    return userService.updateUser(updateUserDto, id);
   }
 
   @PostMapping(value = "/user", consumes = "application/json", produces = "application/json")
-  public UserDto createUser(@RequestBody @Valid UserDto userDto) {
-    return userService.createUser(userDto);
+  public UserDto createUser(@RequestBody @Valid CreateUserDto createUserDto) {
+    return userService.createUser(createUserDto);
   }
 
   @PutMapping(value = "/telegram-login", consumes = "application/json", produces = "application/json")

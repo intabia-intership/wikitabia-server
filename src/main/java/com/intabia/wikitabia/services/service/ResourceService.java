@@ -1,4 +1,4 @@
-package com.intabia.wikitabia.services.interfaces;
+package com.intabia.wikitabia.services.service;
 
 import com.intabia.wikitabia.dto.ResourceDto;
 import java.util.List;

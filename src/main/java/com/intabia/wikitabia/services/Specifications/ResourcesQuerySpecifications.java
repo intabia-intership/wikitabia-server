@@ -1,15 +1,16 @@
 package com.intabia.wikitabia.services.Specifications;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.intabia.wikitabia.model.ResourceEntity;
+import com.intabia.wikitabia.model.ResourceEntity_;
+import com.intabia.wikitabia.model.TagEntity;
+import com.intabia.wikitabia.model.TagEntity_;
+import org.springframework.data.jpa.domain.Specification;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
-import org.springframework.data.jpa.domain.Specification;
-import com.intabia.wikitabia.entities.ResourceEntity;
-import com.intabia.wikitabia.entities.ResourceEntity_;
-import com.intabia.wikitabia.entities.TagEntity;
-import com.intabia.wikitabia.entities.TagEntity_;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResourcesQuerySpecifications {
 

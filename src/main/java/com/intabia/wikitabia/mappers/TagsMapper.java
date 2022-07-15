@@ -1,6 +1,6 @@
 package com.intabia.wikitabia.mappers;
 
-import com.intabia.wikitabia.entities.TagEntity;
+import com.intabia.wikitabia.model.TagEntity;
 import org.mapstruct.Mapper;
 import com.intabia.wikitabia.dto.TagDto;
 

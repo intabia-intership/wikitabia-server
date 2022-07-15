@@ -1,8 +1,8 @@
-package com.intabia.wikitabia.dao;
+package com.intabia.wikitabia.repository;
 
 import java.util.UUID;
 
-import com.intabia.wikitabia.entities.TagEntity;
+import com.intabia.wikitabia.model.TagEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

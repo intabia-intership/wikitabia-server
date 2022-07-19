@@ -1,4 +1,4 @@
-package com.intabia.wikitabia.controllers;
+package com.intabia.wikitabia.controller;
 
 import com.intabia.wikitabia.dto.CreateUserDto;
 import com.intabia.wikitabia.dto.UpdateUserDto;
@@ -42,9 +42,9 @@ public class UserRestController {
    * @return возвращает id удаленного пользователя
    */
   @DeleteMapping("/user/{id}")
-  public String deleteUser(@PathVariable UUID id) {
+  public UUID deleteUser(@PathVariable UUID id) {
     userService.deleteUser(id);
-    return "User was deleted";
+    return id;
   }
 
   /**

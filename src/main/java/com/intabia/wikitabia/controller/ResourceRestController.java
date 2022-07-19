@@ -1,4 +1,4 @@
-package com.intabia.wikitabia.controllers;
+package com.intabia.wikitabia.controller;
 
 import com.intabia.wikitabia.dto.ResourceDto;
 import java.util.List;

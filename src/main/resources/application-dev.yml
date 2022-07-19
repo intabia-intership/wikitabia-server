@@ -1,14 +1,11 @@
 server:
-  port: ${WIKITABIA_SERVER_PORT}
+  port: 8080
 
 spring:
-  profiles:
-    active: dev
-
   datasource:
-    url: ${DB_ADDR}
-    username: ${DB_USER}
-    password: ${DB_PASS}
+    url: jdbc:postgresql://127.0.0.1:5432/wikitabia
+    username: postgres
+    password: postgres
   jpa:
     generate-ddl: true
     properties:
@@ -22,12 +19,12 @@ spring:
       mode: always
 
 keycloak:
-  realm: ${KEYCLOAK_REALM}
-  resource: ${KEYCLOAK_RESOURCE}
-  auth-server-url: ${KEYCLOAK_URL}
+  realm: wikitabia-realm
+  resource: wikitabia-server
+  auth-server-url: http://localhost:8484/auth
   ssl-required: external
   public-client: false
   principal-attribute: preferred_name
   credentials:
-    secret: ${KEYCLOAK_CLIENT_SECRET}
+    secret: idHWgcvC2evu1qCNwgZX25TXVLGUauJ4
   bearer-only: true

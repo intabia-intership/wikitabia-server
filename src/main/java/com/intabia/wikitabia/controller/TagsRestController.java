@@ -1,4 +1,4 @@
-package com.intabia.wikitabia.controllers;
+package com.intabia.wikitabia.controller;
 
 import com.intabia.wikitabia.dto.TagDto;
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.intabia.wikitabia.configuration;
 
-import com.intabia.wikitabia.filter.IgnoreBasicAuthRequestHeaderRequestMatcher;
+import com.intabia.wikitabia.configuration.filter.IgnoreBasicAuthRequestHeaderRequestMatcher;
 import com.intabia.wikitabia.services.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
 import org.keycloak.OAuth2Constants;
@@ -48,7 +48,6 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         SimpleAuthorityMapper grantedAuthorityMapper = new SimpleAuthorityMapper();
-        grantedAuthorityMapper.setPrefix("ROLE_");
 
         KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
         keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(grantedAuthorityMapper);

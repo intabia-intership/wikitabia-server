@@ -1,6 +1,10 @@
 package com.intabia.wikitabia.configuration;
 
 import com.intabia.wikitabia.configuration.filter.IgnoreBasicAuthRequestHeaderRequestMatcher;
+import com.intabia.wikitabia.configuration.voter.MidnightVoter;
+import com.intabia.wikitabia.controller.handler.DelegatingAuthenticationFailureHandler;
+import com.intabia.wikitabia.controller.handler.DelegatingKeycloakAuthenticationEntryPoint;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
@@ -11,6 +15,10 @@ import org.keycloak.adapters.springsecurity.filter.QueryParamPresenceRequestMatc
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.AccessDecisionManager;
+import org.springframework.security.access.vote.AuthenticatedVoter;
+import org.springframework.security.access.vote.RoleVoter;
+import org.springframework.security.access.vote.UnanimousBased;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,6 +26,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.expression.WebExpressionVoter;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.savedrequest.NullRequestCache;
@@ -79,6 +90,12 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     super.configure(http);
+    AccessDecisionManager accessDecisionManager = new UnanimousBased(List.of(
+        new WebExpressionVoter(),
+        new RoleVoter(),
+        new AuthenticatedVoter(),
+        new MidnightVoter()
+    ));
     http
         .csrf().disable()
         .cors().disable()
@@ -88,8 +105,13 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
           .antMatchers(SWAGGER_URL_WHITELIST).permitAll()
           .antMatchers(HttpMethod.OPTIONS, EVERY_URL).permitAll()
           .anyRequest().authenticated()
+          .accessDecisionManager(accessDecisionManager)
           .and()
         .httpBasic()
+          .authenticationEntryPoint(authenticationEntryPoint())
+          .and()
+        .formLogin()
+          .failureHandler(authenticationFailureHandler())
           .and()
         .sessionManagement()
           .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -108,6 +130,21 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
             new QueryParamPresenceRequestMatcher(OAuth2Constants.ACCESS_TOKEN),
             new IgnoreBasicAuthRequestHeaderRequestMatcher()
         );
-    return new KeycloakAuthenticationProcessingFilter(authenticationManagerBean(), requestMatcher);
+    KeycloakAuthenticationProcessingFilter keycloakAuthenticationProcessingFilter =
+        new KeycloakAuthenticationProcessingFilter(authenticationManagerBean(), requestMatcher);
+    keycloakAuthenticationProcessingFilter
+        .setAuthenticationFailureHandler(authenticationFailureHandler());
+    return keycloakAuthenticationProcessingFilter;
+  }
+
+  @Bean
+  @Override
+  protected AuthenticationEntryPoint authenticationEntryPoint() throws Exception {
+    return new DelegatingKeycloakAuthenticationEntryPoint(adapterDeploymentContext());
+  }
+
+  @Bean
+  public AuthenticationFailureHandler authenticationFailureHandler() {
+    return new DelegatingAuthenticationFailureHandler();
   }
 }

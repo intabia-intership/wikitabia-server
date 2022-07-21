@@ -1,5 +1,6 @@
 package com.intabia.wikitabia.model;
 
+import com.intabia.wikitabia.model.annotation.UserFriendlyName;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +17,7 @@ import lombok.With;
  * Сущность для работы с authority.
  */
 @Entity
+@UserFriendlyName("Роль")
 @Table(name = "authority")
 @Data
 @Builder(toBuilder = true)

@@ -1,5 +1,6 @@
 package com.intabia.wikitabia.model;
 
+import com.intabia.wikitabia.model.annotation.UserFriendlyName;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -19,7 +20,8 @@ import lombok.Data;
  * Entity для работы с resources.
  */
 @Entity
-@Table(name = "resources")
+@UserFriendlyName("Ресурс")
+@Table(name = "resource")
 @Data
 public class ResourceEntity {
 

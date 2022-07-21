@@ -1,5 +1,6 @@
 package com.intabia.wikitabia.model;
 
+import com.intabia.wikitabia.model.annotation.UserFriendlyName;
 import java.util.List;
 import java.util.UUID;
 import javax.persistence.CascadeType;
@@ -19,7 +20,8 @@ import lombok.NoArgsConstructor;
  * Entity для работы с tags.
  */
 @Entity
-@Table(name = "tags")
+@UserFriendlyName("Тэг")
+@Table(name = "tag")
 @Data
 @NoArgsConstructor
 public class TagEntity {

@@ -2,7 +2,7 @@ package com.intabia.wikitabia.configuration;
 
 import com.intabia.wikitabia.configuration.filter.IgnoreBasicAuthRequestHeaderRequestMatcher;
 import com.intabia.wikitabia.service.implementation.UserDetailsServiceImpl;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
@@ -30,12 +30,11 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
  */
 @KeycloakConfiguration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   private static final String REGISTRATION_URL = "/api/user";
   private static final String TELEGRAM_LOGIN_URL = "/api/telegram-login";
   private static final String DEFAULT_LOGIN_URL = "/sso/login";
-
   private static final String EVERY_URL = "/**";
   private static final String[] SWAGGER_WHITELIST = {
       // -- Swagger UI v2
@@ -60,6 +59,12 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     return new NullAuthenticatedSessionStrategy();
   }
 
+  /**
+   * метод, настраивающий аутентификации.
+   *
+   * @param auth - AuthenticationManagerBuilder, позволяет настраивать аутентификацию
+   * @throws Exception если произошла ошибка при добавлении UserDetailsService
+   */
   @Autowired
   public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
     SimpleAuthorityMapper grantedAuthorityMapper = new SimpleAuthorityMapper();

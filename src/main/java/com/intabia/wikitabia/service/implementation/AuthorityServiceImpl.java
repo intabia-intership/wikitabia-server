@@ -1,12 +1,15 @@
 package com.intabia.wikitabia.service.implementation;
 
-import com.intabia.wikitabia.dto.AuthorityDto;
+import com.intabia.wikitabia.dto.authority.request.AuthorityRequestDto;
+import com.intabia.wikitabia.dto.authority.response.AuthorityResponseDto;
+import com.intabia.wikitabia.dto.util.FieldRulesConstant;
 import com.intabia.wikitabia.exception.EntityNotFoundException;
 import com.intabia.wikitabia.exception.UniqueFieldException;
-import com.intabia.wikitabia.mappers.entity.AuthoritiesMapper;
+import com.intabia.wikitabia.mappers.AuthoritiesMapper;
 import com.intabia.wikitabia.model.AuthorityEntity;
-import com.intabia.wikitabia.repository.AuthoritiesDao;
+import com.intabia.wikitabia.repository.AuthorityDao;
 import com.intabia.wikitabia.service.AuthorityService;
+import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,25 +23,25 @@ import org.springframework.stereotype.Service;
 public class AuthorityServiceImpl implements AuthorityService {
   private static final String FRIENDLY_ROLE_NAME = "Название роли";
 
-  private final AuthoritiesDao authoritiesDao;
+  private final AuthorityDao authorityDao;
   private final AuthoritiesMapper authoritiesMapper;
 
   @Override
-  public AuthorityDto createAuthority(AuthorityDto authorityDto) {
-    if (authoritiesDao.existsByName(authorityDto.getName())) {
+  public AuthorityResponseDto createAuthority(AuthorityRequestDto authorityDto) {
+    if (authorityDao.existsByName(authorityDto.getName())) {
       throw new UniqueFieldException(AuthorityDto.class, FRIENDLY_ROLE_NAME,
           authorityDto.getName());
     }
     AuthorityEntity authority = authoritiesMapper.dtoToEntity(authorityDto);
-    return authoritiesMapper.entityToDto(authoritiesDao.save(authority));
+    return authoritiesMapper.entityToDto(authorityDao.save(authority));
   }
 
   @Override
-  public AuthorityDto updateAuthority(AuthorityDto authorityDto, UUID id) {
-    AuthorityEntity authority = authoritiesDao.findById(id)
+  public AuthorityResponseDto updateAuthority(AuthorityRequestDto authorityDto, UUID id) {
+    AuthorityEntity authority = authorityDao.findById(id)
         .orElseThrow(() -> new EntityNotFoundException(AuthorityEntity.class, id));
 
-    AuthorityEntity sameAuthority = authoritiesDao.findAuthorityEntityByName(authorityDto.getName())
+    AuthorityEntity sameAuthority = authorityDao.findAuthorityEntityByName(authorityDto.getName())
         .orElse(null);
     if (sameAuthority != null && !sameAuthority.getId().equals(id)) {
       throw new UniqueFieldException(AuthorityDto.class, FRIENDLY_ROLE_NAME,
@@ -46,18 +49,24 @@ public class AuthorityServiceImpl implements AuthorityService {
     }
 
     authoritiesMapper.updateEntity(authority, authorityDto);
-    return authoritiesMapper.entityToDto(authoritiesDao.save(authority));
+    return authoritiesMapper.entityToDto(authorityDao.save(authority));
   }
 
   @Override
-  public void deleteAuthority(UUID id) {
-    authoritiesDao.deleteById(id);
+  public UUID deleteAuthority(UUID id) {
+    if (!authorityDao.existsById(id)) {
+      throw new EntityNotFoundException(AuthorityEntity.class, id);
+    }
+
+    authorityDao.deleteById(id);
+    return id;
   }
 
   @Override
-  public AuthorityDto getAuthority(UUID id) {
-    AuthorityEntity authority = authoritiesDao.findById(id)
+  public AuthorityResponseDto getAuthority(UUID id) {
+    AuthorityEntity authority = authorityDao.findById(id)
         .orElseThrow(() -> new EntityNotFoundException(AuthorityEntity.class, id));
+
     return authoritiesMapper.entityToDto(authority);
   }
 }

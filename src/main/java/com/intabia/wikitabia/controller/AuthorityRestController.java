@@ -1,6 +1,7 @@
 package com.intabia.wikitabia.controller;
 
-import com.intabia.wikitabia.dto.AuthorityDto;
+import com.intabia.wikitabia.dto.authority.request.AuthorityRequestDto;
+import com.intabia.wikitabia.dto.authority.response.AuthorityResponseDto;
 import com.intabia.wikitabia.service.AuthorityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * документация на <a href="https://wikitabia.intabia.ru/swagger-ui.html" />.
+ */
 @RestController
 @RequestMapping("/api/authorities")
 @RequiredArgsConstructor
@@ -30,15 +34,15 @@ public class AuthorityRestController {
   @ApiResponse(responseCode = "200", description = "Роль создана")
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public AuthorityDto saveAuthority(
-      @RequestBody @Valid AuthorityDto authorityDto) {
-    return authorityService.createAuthority(authorityDto);
+  public AuthorityResponseDto saveAuthority(
+      @RequestBody @Valid AuthorityRequestDto authorityRequestDto) {
+    return authorityService.createAuthority(authorityRequestDto);
   }
 
   @Operation(summary = "Найти роль по id")
   @ApiResponse(responseCode = "200", description = "Роль найдена")
   @GetMapping("/{id}")
-  public AuthorityDto getAuthority(
+  public AuthorityResponseDto getAuthority(
       @Parameter(description = "id роли, по которому выполняется поиск")
       @PathVariable UUID id) {
     return authorityService.getAuthority(id);
@@ -48,11 +52,11 @@ public class AuthorityRestController {
   @ApiResponse(responseCode = "200", description = "Роль изменена")
   @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public AuthorityDto updateAuthority(
-      @RequestBody @Valid AuthorityDto authorityDto,
+  public AuthorityResponseDto updateAuthority(
+      @RequestBody @Valid AuthorityRequestDto authorityRequestDto,
       @Parameter(description = "id роли, которую необходимо изменить")
       @PathVariable UUID id) {
-    return authorityService.updateAuthority(authorityDto, id);
+    return authorityService.updateAuthority(authorityRequestDto, id);
   }
 
   @Operation(summary = "Удалить роль по id")
@@ -61,7 +65,6 @@ public class AuthorityRestController {
   public UUID deleteAuthority(
       @Parameter(description = "id роли, которую необходимо удалить")
       @PathVariable UUID id) {
-    authorityService.deleteAuthority(id);
-    return id;
+    return authorityService.deleteAuthority(id);
   }
 }

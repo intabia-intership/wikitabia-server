@@ -1,5 +1,6 @@
 package com.intabia.wikitabia.dto;
 
+import com.intabia.wikitabia.dto.user.response.UserResponseDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -33,13 +34,13 @@ public class ResourceDto {
    */
   private LocalDateTime createdAt;
   /**
-   * счетчик обращений к ресурсу
+   * счетчик обращений к ресурсу.
    */
   private Long ratingCount;
   /**
    * Идентификатор пользователя, который добавил ресурс.
    */
-  private UserDto creator;
+  private UserResponseDto creator;
   /**
    * Список тегов.
    */

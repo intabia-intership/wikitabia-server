@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * слой DAO для работы с таблицей authority в БД.
  */
-public interface AuthoritiesDao extends JpaRepository<AuthorityEntity, UUID> {
+public interface AuthorityDao extends JpaRepository<AuthorityEntity, UUID> {
   Optional<AuthorityEntity> findAuthorityEntityByName(String name);
 
   boolean existsByName(String name);

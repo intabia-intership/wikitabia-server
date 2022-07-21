@@ -15,7 +15,8 @@ public interface ResourceService {
 
   void deleteResource(UUID id);
 
-  Page<ResourceDto> getResources(int page, int size, String sort, String filter, List<String> filterByTag);
+  Page<ResourceDto> getResources(int page, int size, String sort, String filter,
+                                 List<String> filterByTag);
 
   ResourceDto getResource(UUID id);
 

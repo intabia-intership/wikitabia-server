@@ -1,8 +1,8 @@
 package com.intabia.wikitabia.service;
 
-import com.intabia.wikitabia.dto.CreateUserDto;
-import com.intabia.wikitabia.dto.UpdateUserDto;
-import com.intabia.wikitabia.dto.UserDto;
+import com.intabia.wikitabia.dto.user.request.UserCreateRequestDto;
+import com.intabia.wikitabia.dto.user.request.UserUpdateRequestDto;
+import com.intabia.wikitabia.dto.user.response.UserResponseDto;
 import java.util.UUID;
 
 /**
@@ -12,26 +12,26 @@ public interface UserService {
   /**
    * создание нового пользователя.
    *
-   * @param createUserDto - создаваемый пользователь
+   * @param userCreateRequestDto - создаваемый пользователь
    * @return возвращает созданного пользователя
    */
-  UserDto createUser(CreateUserDto createUserDto);
+  UserResponseDto createUser(UserCreateRequestDto userCreateRequestDto);
 
   /**
    * модификация пользователя по id.
    *
-   * @param updateUserDto - новый пользователь
+   * @param userUpdateRequestDto - новый пользователь
    * @param id - id пользователя
    * @return возвращает измененного пользователя
    */
-  UserDto updateUser(UpdateUserDto updateUserDto, UUID id);
+  UserResponseDto updateUser(UserUpdateRequestDto userUpdateRequestDto, UUID id);
 
   /**
    * удаление пользователя по id.
    *
    * @param id - id пользователя
    */
-  void deleteUser(UUID id);
+  UUID deleteUser(UUID id);
 
   /**
    * получение пользователя по id.
@@ -39,12 +39,13 @@ public interface UserService {
    * @param id - id пользователя
    * @return возвращает найденного пользователя
    */
-  UserDto getUser(UUID id);
+  UserResponseDto getUser(UUID id);
 
   /**
    * назачение пользователю telegram-логина.
    *
    * @param user - пользователь, которому необходимо назначить telegram-логин
+   * @return возвращает измененного пользователя
    */
-  void addLogin(UserDto user);
+  UserResponseDto addLogin(UserUpdateRequestDto user, UUID id);
 }

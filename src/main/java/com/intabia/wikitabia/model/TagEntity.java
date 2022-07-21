@@ -1,8 +1,7 @@
 package com.intabia.wikitabia.model;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import java.util.List;
+import java.util.UUID;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,8 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import java.util.List;
-import java.util.UUID;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Entity для работы с tags.

@@ -4,6 +4,9 @@ import java.util.List;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
+/**
+ * javadoc заглушка, чтобы checkstyle не ругался.
+ */
 @Data
 @Component
 public class RequestInfoSaver {

@@ -1,5 +1,6 @@
 package com.intabia.wikitabia.dto;
 
+import com.intabia.wikitabia.dto.user.response.UserResponseDto;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import javax.validation.constraints.NotBlank;
@@ -43,7 +44,7 @@ public class ResourceModel {
   /**
    * Идентификатор пользователя, который добавил ресурс.
    */
-  private UserDto creator;
+  private UserResponseDto creator;
   /**
    * Список тегов.
    */

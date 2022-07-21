@@ -1,9 +1,11 @@
-package com.intabia.wikitabia.dto;
+package com.intabia.wikitabia.dto.user.response;
 
+import com.intabia.wikitabia.dto.authority.response.AuthorityResponseDto;
 import com.intabia.wikitabia.dto.util.DtoConstant;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
+import java.util.UUID;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -14,14 +16,20 @@ import lombok.NoArgsConstructor;
 
 
 /**
- * dto класс для создания пользователя.
+ * dto класс для передачи сущности users между frontend и backend.
  */
-@Schema(description = "Создаваемый пользователь")
+@Schema(description = "Пользователь")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateUserDto {
+public class UserResponseDto {
+  /**
+   * id пользователя.
+   */
+  @Schema(description = "id пользователя", example = DtoConstant.EXAMPLE_UUID)
+  private UUID id;
+
   /**
    * имя пользователя.
    */
@@ -52,18 +60,26 @@ public class CreateUserDto {
   /**
    * пароль.
    */
-  @Schema(description = "пароль пользователя", example = DtoConstant.EXAMPLE_USER_DECODED_PASSWORD)
+  @Schema(description = "закодированный пароль пользователя",
+      example = DtoConstant.EXAMPLE_USER_ENCODED_PASSWORD)
   @NotBlank
   @Size(min = 5, max = 20,
       message = "Длина пароля должна быть в пределах от 5 до 20 символов")
   private String password;
 
   /**
-   * список названий authorities пользователя.
+   * логин в telegram.
    */
-  @ArraySchema(schema = @Schema(implementation = String.class),
+  @Schema(description = "логин пользователя в telegram",
+      example = DtoConstant.EXAMPLE_USER_TELEGRAM_LOGIN)
+  private String telegramLogin;
+
+  /**
+   * список authorities пользователя.
+   */
+  @ArraySchema(schema = @Schema(implementation = AuthorityResponseDto.class),
       arraySchema = @Schema(description = "информация по ролям",
-          example = DtoConstant.EXAMPLE_STRING_AUTHORITIES_LIST))
+          example = DtoConstant.EXAMPLE_AUTHORITIES_LIST))
   @NotEmpty(message = "Пользователь обязан иметь роль")
-  private List<String> authorities;
+  private List<AuthorityResponseDto> authorities;
 }

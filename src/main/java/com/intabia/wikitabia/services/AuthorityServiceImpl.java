@@ -3,7 +3,7 @@ package com.intabia.wikitabia.services;
 import com.intabia.wikitabia.repository.AuthoritiesDao;
 import com.intabia.wikitabia.dto.AuthorityDto;
 import com.intabia.wikitabia.model.AuthorityEntity;
-import com.intabia.wikitabia.exceptions.DataAccessException;
+import com.intabia.wikitabia.exception.DataNotFoundException;
 import com.intabia.wikitabia.mappers.AuthoritiesMapper;
 import com.intabia.wikitabia.services.service.AuthorityService;
 import lombok.AllArgsConstructor;
@@ -31,7 +31,7 @@ public class AuthorityServiceImpl implements AuthorityService {
     @Override
     public AuthorityDto updateAuthority(AuthorityDto authorityDto, UUID id) {
         AuthorityEntity authority = authoritiesDao.findById(id)
-                .orElseThrow(() -> new DataAccessException(ROLE_NOT_FOUND_ERR_MSG));
+                .orElseThrow(() -> new DataNotFoundException(ROLE_NOT_FOUND_ERR_MSG));
         authoritiesMapper.updateEntity(authority, authorityDto);
         return authoritiesMapper.entityToDto(authoritiesDao.save(authority));
     }
@@ -44,7 +44,7 @@ public class AuthorityServiceImpl implements AuthorityService {
     @Override
     public AuthorityDto getAuthority(UUID id) {
         AuthorityEntity authority = authoritiesDao.findById(id)
-                .orElseThrow(() -> new DataAccessException(ROLE_NOT_FOUND_ERR_MSG));
+                .orElseThrow(() -> new DataNotFoundException(ROLE_NOT_FOUND_ERR_MSG));
         return authoritiesMapper.entityToDto(authority);
     }
 }

@@ -3,8 +3,7 @@ package com.intabia.wikitabia.services;
 import com.intabia.wikitabia.dto.CreateUserDto;
 import com.intabia.wikitabia.dto.UpdateUserDto;
 import com.intabia.wikitabia.dto.UserDto;
-import com.intabia.wikitabia.exceptions.CustomException;
-import com.intabia.wikitabia.exceptions.DataAccessException;
+import com.intabia.wikitabia.exception.DataNotFoundException;
 import com.intabia.wikitabia.mappers.UsersMapper;
 import com.intabia.wikitabia.model.AuthorityEntity;
 import com.intabia.wikitabia.model.UserEntity;
@@ -41,7 +40,7 @@ public class UserServiceImpl implements UserService {
     Set<AuthorityEntity> authorities = new HashSet<>(createUserDto.getAuthorities().size());
     for (String authorityName : createUserDto.getAuthorities()) {
       AuthorityEntity authority = authoritiesDao.findAuthorityEntityByName(authorityName)
-              .orElseThrow(() -> new DataAccessException(ROLE_NOT_FOUND_ERR_MSG));
+              .orElseThrow(() -> new DataNotFoundException(ROLE_NOT_FOUND_ERR_MSG));
       authorities.add(authority);
     }
     UserEntity userEntity = usersMapper.dtoToEntity(createUserDto);
@@ -54,12 +53,12 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserDto updateUser(UpdateUserDto updateUserDto, UUID id) {
     UserEntity user = usersDao.findById(id)
-            .orElseThrow(() -> new DataAccessException(USER_NOT_FOUND_ERR_MSG));
+            .orElseThrow(() -> new DataNotFoundException(USER_NOT_FOUND_ERR_MSG));
 
     Set<AuthorityEntity> authorities = new HashSet<>(updateUserDto.getAuthorities().size());
     for (String authorityName : updateUserDto.getAuthorities()) {
       AuthorityEntity authority = authoritiesDao.findAuthorityEntityByName(authorityName)
-              .orElseThrow(() -> new DataAccessException(ROLE_NOT_FOUND_ERR_MSG));
+              .orElseThrow(() -> new DataNotFoundException(ROLE_NOT_FOUND_ERR_MSG));
       authorities.add(authority);
     }
     usersMapper.updateEntity(user, updateUserDto);
@@ -77,31 +76,15 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserDto getUser(UUID id) {
     UserEntity userEntity = usersDao.findById(id)
-        .orElseThrow(() -> new DataAccessException(USER_NOT_FOUND_ERR_MSG));
+        .orElseThrow(() -> new DataNotFoundException(USER_NOT_FOUND_ERR_MSG));
     return usersMapper.entityToDto(userEntity);
   }
 
   @Override
-  public UserDto authorization(String userName, String userPassword) {
-    String encodedPassword = passwordEncoder.encode(userPassword);
-    UserEntity user = usersDao.findUsersEntityByLoginAndPassword(userName, encodedPassword)
-        .orElseThrow(() -> new CustomException(AUTHORIZATION_ERR_MSG));
-    return usersMapper.entityToDto(user);
-  }
-
-  @Override
   public void addLogin(UserDto user) {
-    UserEntity userEntity = usersDao.findById(user.getId()).orElse(null);
-    if (userEntity == null) {
-      return;
-    }
+    UserEntity userEntity = usersDao.findById(user.getId())
+            .orElseThrow(() -> new DataNotFoundException(USER_NOT_FOUND_ERR_MSG));
     userEntity.setTelegramLogin(user.getTelegramLogin());
     usersDao.save(userEntity);
-  }
-
-  @Override
-  public UserDto findUserByLogin(String login) {
-    return usersMapper.entityToDto(usersDao.findUserEntityByLogin(login)
-        .orElseThrow(() -> new DataAccessException(USER_NOT_FOUND_ERR_MSG)));
   }
 }

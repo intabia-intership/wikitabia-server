@@ -27,7 +27,7 @@ import lombok.With;
 @With
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserEntity {
+public class UserEntity implements EntityWithUuid {
 
   @Id
   @GeneratedValue

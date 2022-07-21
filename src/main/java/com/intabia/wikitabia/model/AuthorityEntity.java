@@ -22,7 +22,7 @@ import lombok.With;
 @With
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthorityEntity {
+public class AuthorityEntity implements EntityWithUuid {
 
   /**
    * authority id.

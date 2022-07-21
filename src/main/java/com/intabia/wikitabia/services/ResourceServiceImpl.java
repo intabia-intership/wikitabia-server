@@ -1,17 +1,14 @@
 package com.intabia.wikitabia.services;
 
-import com.intabia.wikitabia.repository.ResourcesDao;
-import com.intabia.wikitabia.repository.TagsDao;
-import com.intabia.wikitabia.repository.UsersDao;
 import com.intabia.wikitabia.dto.ResourceDto;
-import com.intabia.wikitabia.exceptions.CustomException;
+import com.intabia.wikitabia.exception.DataNotFoundException;
 import com.intabia.wikitabia.mappers.ResourcesMapper;
+import com.intabia.wikitabia.model.ResourceEntity;
+import com.intabia.wikitabia.model.UserEntity;
+import com.intabia.wikitabia.repository.ResourcesDao;
+import com.intabia.wikitabia.repository.UsersDao;
 import com.intabia.wikitabia.services.Specifications.ResourcesQuerySpecifications;
 import com.intabia.wikitabia.services.service.ResourceService;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,8 +16,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.intabia.wikitabia.model.ResourceEntity;
-import com.intabia.wikitabia.model.UserEntity;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * реализация сервисного слоя для resources.
@@ -29,10 +28,11 @@ import com.intabia.wikitabia.model.UserEntity;
 @AllArgsConstructor
 @Transactional
 public class ResourceServiceImpl implements ResourceService {
+  private static final String RESOURCE_NOT_FOUND_ERR_MSG = "Ресурс не найден";
+
   private final ResourcesMapper resourcesMapper;
   private final ResourcesDao resourcesDao;
   private final UsersDao usersDao;
-  private final TagsDao tagsDao;
 
   @Override
   public ResourceDto createResource(ResourceDto resourceDto) {
@@ -50,7 +50,7 @@ public class ResourceServiceImpl implements ResourceService {
   @Override
   public ResourceDto getResource(UUID id) {
     ResourceEntity outgoingResourceEntity = resourcesDao.findById(id)
-        .orElseThrow(() -> new CustomException("Ошибка получения ресурса"));
+        .orElseThrow(() -> new DataNotFoundException(RESOURCE_NOT_FOUND_ERR_MSG));
     return resourcesMapper.entityToDto(outgoingResourceEntity);
   }
 
@@ -74,10 +74,8 @@ public class ResourceServiceImpl implements ResourceService {
   }
 
   public void incrementRating(UUID id) {
-    ResourceEntity resourceEntity = resourcesDao.findById(id).orElse(null);
-    if (resourceEntity == null) {
-      return;
-    }
+    ResourceEntity resourceEntity = resourcesDao.findById(id)
+            .orElseThrow(() -> new DataNotFoundException(RESOURCE_NOT_FOUND_ERR_MSG));
     resourceEntity.getTags().stream()
         .filter(tag -> tag.getRatingCount() == null)
         .forEach(tag -> tag.setRatingCount(0L));

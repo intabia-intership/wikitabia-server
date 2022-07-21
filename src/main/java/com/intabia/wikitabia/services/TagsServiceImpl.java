@@ -1,15 +1,11 @@
 package com.intabia.wikitabia.services;
 
-import com.intabia.wikitabia.repository.TagsDao;
 import com.intabia.wikitabia.dto.TagDto;
-import com.intabia.wikitabia.exceptions.CustomException;
+import com.intabia.wikitabia.exception.DataNotFoundException;
 import com.intabia.wikitabia.mappers.TagsMapper;
+import com.intabia.wikitabia.model.TagEntity;
+import com.intabia.wikitabia.repository.TagsDao;
 import com.intabia.wikitabia.services.service.TagsService;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +13,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.intabia.wikitabia.model.TagEntity;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * реализация сервиса для работы с сущностями tags.
@@ -26,6 +26,8 @@ import com.intabia.wikitabia.model.TagEntity;
 @AllArgsConstructor
 @Transactional
 public class TagsServiceImpl implements TagsService {
+  private static final String TAG_NOT_FOUNT_ERR_MSG = "Тег не найден";
+
   private final TagsMapper tagsMapper;
   private final TagsDao tagsDao;
 
@@ -49,7 +51,7 @@ public class TagsServiceImpl implements TagsService {
   @Override
   public TagDto getTag(UUID id) {
     TagEntity tag = tagsDao.findById(id)
-        .orElseThrow(() -> new CustomException("Ошибка получения тега"));
+        .orElseThrow(() -> new DataNotFoundException(TAG_NOT_FOUNT_ERR_MSG));
     return tagsMapper.entityToDto(tag);
   }
 
@@ -69,10 +71,8 @@ public class TagsServiceImpl implements TagsService {
 
   @Override
   public void incrementTag(UUID id) {
-    TagEntity tag = tagsDao.findById(id).orElse(null);
-    if (tag == null) {
-      return;
-    }
+    TagEntity tag = tagsDao.findById(id)
+            .orElseThrow(() -> new DataNotFoundException(TAG_NOT_FOUNT_ERR_MSG));
     if (tag.getRatingCount() == null) {
       tag.setRatingCount(0L);
     }

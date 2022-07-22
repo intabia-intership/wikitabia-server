@@ -1,7 +1,7 @@
 package com.intabia.wikitabia.controller;
 
 import com.intabia.wikitabia.dto.AuthorityDto;
-import com.intabia.wikitabia.services.service.AuthorityService;
+import com.intabia.wikitabia.service.AuthorityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;

@@ -3,7 +3,7 @@ package com.intabia.wikitabia.controller;
 import com.intabia.wikitabia.dto.CreateUserDto;
 import com.intabia.wikitabia.dto.UpdateUserDto;
 import com.intabia.wikitabia.dto.UserDto;
-import com.intabia.wikitabia.services.service.UserService;
+import com.intabia.wikitabia.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;

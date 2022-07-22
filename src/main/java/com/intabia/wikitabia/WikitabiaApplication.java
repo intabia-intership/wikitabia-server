@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 @EnableJpaRepositories
 public class WikitabiaApplication {
-    public static void main(String[] args) {
-        new SpringApplicationBuilder(WikitabiaApplication.class).build(args).run();
-    }
+  public static void main(String[] args) {
+    new SpringApplicationBuilder(WikitabiaApplication.class).build(args).run();
+  }
 }

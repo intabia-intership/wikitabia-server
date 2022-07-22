@@ -4,6 +4,10 @@ import com.intabia.wikitabia.dto.CreateUserDto;
 import com.intabia.wikitabia.dto.UpdateUserDto;
 import com.intabia.wikitabia.dto.UserDto;
 import com.intabia.wikitabia.services.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import java.util.UUID;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,9 +18,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
@@ -30,6 +31,9 @@ public class UserRestController {
    * @param id - id пользователя
    * @return возвращает найденного пользователя
    */
+  @SecurityRequirement(name = "wikitabia basic")
+  @SecurityRequirement(name = "wikitabia keycloak")
+  @Operation(summary = "Получить пользователя по id")
   @GetMapping("/user/{id}")
   public UserDto getUser(@PathVariable UUID id) {
     return userService.getUser(id);
@@ -41,6 +45,9 @@ public class UserRestController {
    * @param id - id пользователя
    * @return возвращает id удаленного пользователя
    */
+  @SecurityRequirement(name = "wikitabia basic")
+  @SecurityRequirement(name = "wikitabia keycloak")
+  @Operation(summary = "Удалить пользователя по id")
   @DeleteMapping("/user/{id}")
   public UUID deleteUser(@PathVariable UUID id) {
     userService.deleteUser(id);
@@ -54,6 +61,9 @@ public class UserRestController {
    * @param id - id пользователя
    * @return возвращает измененного пользователя
    */
+  @SecurityRequirement(name = "wikitabia basic")
+  @SecurityRequirement(name = "wikitabia keycloak")
+  @Operation(summary = "Изменить пользователя по id")
   @PutMapping(value = "/user/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public UserDto updateUser(@RequestBody @Valid UpdateUserDto updateUserDto, @PathVariable UUID id) {
     return userService.updateUser(updateUserDto, id);
@@ -65,6 +75,7 @@ public class UserRestController {
    * @param createUserDto - создаваемый пользователь
    * @return возвращает созданного пользователя
    */
+  @Operation(summary = "Создать нового пользователя")
   @PostMapping(value = "/user", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public UserDto createUser(@RequestBody @Valid CreateUserDto createUserDto) {
     return userService.createUser(createUserDto);
@@ -75,6 +86,7 @@ public class UserRestController {
    *
    * @param user - пользователь, которому необходимо назначить telegram-логин
    */
+  @Operation(summary = "Назначить пользователю телеграм-логин")
   @PutMapping(value = "/telegram-login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public void addTelegramLogin(@RequestBody UserDto user) {
     userService.addLogin(user);

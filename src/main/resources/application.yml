@@ -31,3 +31,8 @@ keycloak:
   credentials:
     secret: ${KEYCLOAK_CLIENT_SECRET}
   bearer-only: true
+
+springdoc:
+  packages-to-scan: com.intabia.wikitabia.controller
+  paths-to-match: /api/**, /tag/**
+  default-produces-media-type: application/json

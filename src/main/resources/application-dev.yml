@@ -28,3 +28,8 @@ keycloak:
   credentials:
     secret: idHWgcvC2evu1qCNwgZX25TXVLGUauJ4
   bearer-only: true
+
+springdoc:
+  packages-to-scan: com.intabia.wikitabia.controller
+  paths-to-match: /api/**, /tag/**
+  default-produces-media-type: application/json

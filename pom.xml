@@ -98,6 +98,8 @@
         <keycloak.starter.version>18.0.0</keycloak.starter.version>
         <spring.security.test.version>5.7.1</spring.security.test.version>
         <spring.security.starter.version>2.6.7</spring.security.starter.version>
+        <springdoc.openapi.ui.version>1.6.9</springdoc.openapi.ui.version>
+        <springdoc.openapi.security.version>1.6.9</springdoc.openapi.security.version>
     </properties>
 
     <dependencies>
@@ -252,6 +254,17 @@
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-spring-boot-starter</artifactId>
             <version>${keycloak.starter.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${springdoc.openapi.ui.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-security</artifactId>
+            <version>${springdoc.openapi.security.version}</version>
         </dependency>
     </dependencies>
 </project>

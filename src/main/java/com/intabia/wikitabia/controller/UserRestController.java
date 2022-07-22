@@ -4,7 +4,7 @@ import com.intabia.wikitabia.controller.annotation.NoSecurityRequirements;
 import com.intabia.wikitabia.dto.CreateUserDto;
 import com.intabia.wikitabia.dto.UpdateUserDto;
 import com.intabia.wikitabia.dto.UserDto;
-import com.intabia.wikitabia.services.service.UserService;
+import com.intabia.wikitabia.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

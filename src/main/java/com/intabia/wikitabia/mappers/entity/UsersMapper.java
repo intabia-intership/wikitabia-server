@@ -1,10 +1,10 @@
-package com.intabia.wikitabia.mappers;
+package com.intabia.wikitabia.mappers.entity;
 
 import com.intabia.wikitabia.dto.CreateUserDto;
 import com.intabia.wikitabia.dto.UpdateUserDto;
+import com.intabia.wikitabia.dto.UserDto;
 import com.intabia.wikitabia.model.UserEntity;
 import org.mapstruct.Mapper;
-import com.intabia.wikitabia.dto.UserDto;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 

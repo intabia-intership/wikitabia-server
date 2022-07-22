@@ -61,7 +61,8 @@ public class UserDto {
   @Schema(description = "закодированный пароль пользователя",
       example = DtoConstant.EXAMPLE_USER_ENCODED_PASSWORD)
   @NotBlank
-  @Size(min = 5, max = 20, message = "Длина пароля должна быть в пределах от 5 до 20 символов")
+  @Size(min = 5, max = 20,
+      message = "Длина пароля должна быть в пределах от 5 до 20 символов")
   private String password;
 
   /**

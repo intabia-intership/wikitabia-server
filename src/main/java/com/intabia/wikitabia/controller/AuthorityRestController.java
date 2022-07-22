@@ -1,7 +1,7 @@
 package com.intabia.wikitabia.controller;
 
 import com.intabia.wikitabia.dto.AuthorityDto;
-import com.intabia.wikitabia.services.service.AuthorityService;
+import com.intabia.wikitabia.service.AuthorityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

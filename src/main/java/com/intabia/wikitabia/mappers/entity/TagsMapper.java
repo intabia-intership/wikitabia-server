@@ -1,8 +1,8 @@
-package com.intabia.wikitabia.mappers;
+package com.intabia.wikitabia.mappers.entity;
 
+import com.intabia.wikitabia.dto.TagDto;
 import com.intabia.wikitabia.model.TagEntity;
 import org.mapstruct.Mapper;
-import com.intabia.wikitabia.dto.TagDto;
 
 /**
  * маппер сущностей tags.

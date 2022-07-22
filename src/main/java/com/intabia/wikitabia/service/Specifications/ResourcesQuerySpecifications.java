@@ -1,4 +1,4 @@
-package com.intabia.wikitabia.services.Specifications;
+package com.intabia.wikitabia.service.Specifications;
 
 import com.intabia.wikitabia.model.ResourceEntity;
 import com.intabia.wikitabia.model.ResourceEntity_;

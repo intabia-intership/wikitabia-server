@@ -1,4 +1,4 @@
-package com.intabia.wikitabia.services;
+package com.intabia.wikitabia.service.implementation;
 
 import com.intabia.wikitabia.model.UserEntity;
 import com.intabia.wikitabia.repository.UsersDao;

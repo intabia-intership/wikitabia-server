@@ -1,4 +1,4 @@
-package com.intabia.wikitabia.services;
+package com.intabia.wikitabia.service.implementation;
 
 import com.intabia.wikitabia.model.UserEntity;
 import com.intabia.wikitabia.repository.UsersDao;
@@ -39,7 +39,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .password(user.getPassword())
                 .authorities(user.getAuthorities()
                         .stream()
-                        .map((authorityEntity -> new SimpleGrantedAuthority("ROLE_"+authorityEntity.getName())))
+                        .map((authorityEntity -> new SimpleGrantedAuthority("ROLE_" + authorityEntity.getName())))
                         .collect(Collectors.toList()))
                 .build();
     }

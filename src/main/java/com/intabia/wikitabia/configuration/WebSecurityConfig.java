@@ -1,7 +1,7 @@
 package com.intabia.wikitabia.configuration;
 
 import com.intabia.wikitabia.configuration.filter.IgnoreBasicAuthRequestHeaderRequestMatcher;
-import com.intabia.wikitabia.services.UserDetailsServiceImpl;
+import com.intabia.wikitabia.service.implementation.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;

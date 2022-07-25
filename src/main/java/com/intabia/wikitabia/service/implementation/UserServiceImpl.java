@@ -1,24 +1,23 @@
-package com.intabia.wikitabia.services;
+package com.intabia.wikitabia.service.implementation;
 
 import com.intabia.wikitabia.dto.CreateUserDto;
 import com.intabia.wikitabia.dto.UpdateUserDto;
 import com.intabia.wikitabia.dto.UserDto;
-import com.intabia.wikitabia.exceptions.CustomException;
-import com.intabia.wikitabia.exceptions.DataAccessException;
+import com.intabia.wikitabia.exception.DataNotFoundException;
+import com.intabia.wikitabia.exception.InvalidBodyException;
 import com.intabia.wikitabia.mappers.UsersMapper;
 import com.intabia.wikitabia.model.AuthorityEntity;
 import com.intabia.wikitabia.model.UserEntity;
 import com.intabia.wikitabia.repository.AuthoritiesDao;
 import com.intabia.wikitabia.repository.UsersDao;
-import com.intabia.wikitabia.services.service.UserService;
+import com.intabia.wikitabia.service.UserService;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * реализация сервиса для работы с сущностями user.
@@ -27,10 +26,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService {
-  private static final String ROLE_NOT_FOUND_ERR_MSG = "Роль не найдена";
-  private static final String USER_NOT_FOUND_ERR_MSG = "Пользователь не найден";
-  private static final String AUTHORIZATION_ERR_MSG = "Ошибка авторизации";
-
   private final UsersMapper usersMapper;
   private final UsersDao usersDao;
   private final AuthoritiesDao authoritiesDao;
@@ -41,7 +36,8 @@ public class UserServiceImpl implements UserService {
     Set<AuthorityEntity> authorities = new HashSet<>(createUserDto.getAuthorities().size());
     for (String authorityName : createUserDto.getAuthorities()) {
       AuthorityEntity authority = authoritiesDao.findAuthorityEntityByName(authorityName)
-              .orElseThrow(() -> new DataAccessException(ROLE_NOT_FOUND_ERR_MSG));
+          .orElseThrow(() -> InvalidBodyException.create(new String[]{"authorities"}, authorityName,
+              "Роль добавляемого пользователя должна существовать"));
       authorities.add(authority);
     }
     UserEntity userEntity = usersMapper.dtoToEntity(createUserDto);
@@ -54,12 +50,13 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserDto updateUser(UpdateUserDto updateUserDto, UUID id) {
     UserEntity user = usersDao.findById(id)
-            .orElseThrow(() -> new DataAccessException(USER_NOT_FOUND_ERR_MSG));
+        .orElseThrow(() -> DataNotFoundException.create(UserEntity.class, id));
 
     Set<AuthorityEntity> authorities = new HashSet<>(updateUserDto.getAuthorities().size());
     for (String authorityName : updateUserDto.getAuthorities()) {
       AuthorityEntity authority = authoritiesDao.findAuthorityEntityByName(authorityName)
-              .orElseThrow(() -> new DataAccessException(ROLE_NOT_FOUND_ERR_MSG));
+          .orElseThrow(() -> InvalidBodyException.create(new String[]{"authorities"}, authorityName,
+              "Роль добавляемого пользователя должна существовать"));
       authorities.add(authority);
     }
     usersMapper.updateEntity(user, updateUserDto);
@@ -77,31 +74,15 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserDto getUser(UUID id) {
     UserEntity userEntity = usersDao.findById(id)
-        .orElseThrow(() -> new DataAccessException(USER_NOT_FOUND_ERR_MSG));
+        .orElseThrow(() -> DataNotFoundException.create(UserEntity.class, id));
     return usersMapper.entityToDto(userEntity);
   }
 
   @Override
-  public UserDto authorization(String userName, String userPassword) {
-    String encodedPassword = passwordEncoder.encode(userPassword);
-    UserEntity user = usersDao.findUsersEntityByLoginAndPassword(userName, encodedPassword)
-        .orElseThrow(() -> new CustomException(AUTHORIZATION_ERR_MSG));
-    return usersMapper.entityToDto(user);
-  }
-
-  @Override
   public void addLogin(UserDto user) {
-    UserEntity userEntity = usersDao.findById(user.getId()).orElse(null);
-    if (userEntity == null) {
-      return;
-    }
+    UserEntity userEntity = usersDao.findById(user.getId())
+        .orElseThrow(() -> DataNotFoundException.create(UserEntity.class, user.getId()));
     userEntity.setTelegramLogin(user.getTelegramLogin());
     usersDao.save(userEntity);
-  }
-
-  @Override
-  public UserDto findUserByLogin(String login) {
-    return usersMapper.entityToDto(usersDao.findUserEntityByLogin(login)
-        .orElseThrow(() -> new DataAccessException(USER_NOT_FOUND_ERR_MSG)));
   }
 }

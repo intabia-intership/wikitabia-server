@@ -1,5 +1,7 @@
 server:
   port: ${WIKITABIA_SERVER_PORT}
+  forward-headers-strategy: framework
+
 
 spring:
   profiles:
@@ -32,7 +34,9 @@ keycloak:
     secret: ${KEYCLOAK_CLIENT_SECRET}
   bearer-only: true
 
-springdoc:
-  packages-to-scan: com.intabia.wikitabia.controller
-  paths-to-match: /api/**, /tag/**
-  default-produces-media-type: application/json
+wikitabia:
+  server:
+    url: ${WIKITABIA_SERVER_URL}
+  keycloak:
+    url: ${KEYCLOAK_URL}
+    realm: ${KEYCLOAK_REALM}

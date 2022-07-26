@@ -35,6 +35,8 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   private static final String REGISTRATION_URL = "/api/user";
   private static final String TELEGRAM_LOGIN_URL = "/api/telegram-login";
   private static final String DEFAULT_LOGIN_URL = "/sso/login";
+
+  private static final String EVERY_URL = "/**";
   private static final String[] SWAGGER_WHITELIST = {
       // -- Swagger UI v2
       "/v2/api-docs",
@@ -79,6 +81,7 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
           .antMatchers(HttpMethod.POST, REGISTRATION_URL).permitAll()
           .antMatchers(TELEGRAM_LOGIN_URL).permitAll()
           .antMatchers(SWAGGER_WHITELIST).permitAll()
+          .antMatchers(HttpMethod.OPTIONS, EVERY_URL).permitAll()
           .anyRequest().authenticated()
           .and()
         .httpBasic()

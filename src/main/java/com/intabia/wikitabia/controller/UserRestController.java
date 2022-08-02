@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.UUID;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Tag(name = "Пользователь API", description = "API для операций над пользователями")
 public class UserRestController {
+  private final Logger logger = LoggerFactory.getLogger("com.intabia.wikitabia.logger");
   private final UserService userService;
 
   @Operation(summary = "Создать нового пользователя")
@@ -39,6 +42,7 @@ public class UserRestController {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public UserResponseDto createUser(
       @RequestBody @Valid UserCreateRequestDto userCreateRequestDto) {
+    logger.debug("Принят запрос на создание пользователя, arg1={}", userCreateRequestDto);
     return userService.createUser(userCreateRequestDto);
   }
 
@@ -48,6 +52,7 @@ public class UserRestController {
   public UserResponseDto getUser(
       @Parameter(description = "id пользователя, по которому выполняется поиск")
       @PathVariable UUID id) {
+    logger.debug("Принят запрос на получение пользователя, arg1={}", id);
     return userService.getUser(id);
   }
 
@@ -59,6 +64,8 @@ public class UserRestController {
       @RequestBody @Valid UserUpdateRequestDto userUpdateRequestDto,
       @Parameter(description = "id пользователя, которого необходимо изменить")
       @PathVariable UUID id) {
+    logger.debug("Принят запрос на обновление пользователя, arg1={}, arg2={}", userUpdateRequestDto,
+        id);
     return userService.updateUser(userUpdateRequestDto, id);
   }
 
@@ -68,6 +75,7 @@ public class UserRestController {
   public UUID deleteUser(
       @Parameter(description = "id пользователя, которого необходимо удалить")
       @PathVariable UUID id) {
+    logger.debug("Принят запрос на удаление пользователя, arg1={}", id);
     return userService.deleteUser(id);
   }
 
@@ -78,6 +86,8 @@ public class UserRestController {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public UserResponseDto addTelegramLogin(@RequestBody UserUpdateRequestDto user,
                                           @PathVariable UUID id) {
+    logger.debug("Принят запрос на назначение пользователю логина в телеграм, arg1={}, arg2={}",
+        user, id);
     return userService.addLogin(user, id);
   }
 }

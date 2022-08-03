@@ -32,58 +32,77 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @AllArgsConstructor
 public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
-    private static final String REGISTRATION_URL = "/api/user";
-    private static final String TELEGRAM_LOGIN_URL = "/api/telegram-login";
-    private static final String DEFAULT_LOGIN_URL = "/sso/login";
+  private static final String REGISTRATION_URL = "/api/user";
+  private static final String TELEGRAM_LOGIN_URL = "/api/telegram-login";
+  private static final String DEFAULT_LOGIN_URL = "/sso/login";
 
-    private final UserDetailsServiceImpl userDetailsService;
-    private final PasswordEncoder passwordEncoder;
+  private static final String EVERY_URL = "/**";
+  private static final String[] SWAGGER_WHITELIST = {
+      // -- Swagger UI v2
+      "/v2/api-docs",
+      "/swagger-resources",
+      "/swagger-resources/**",
+      "/configuration/ui",
+      "/configuration/security",
+      "/swagger-ui.html",
+      "/webjars/**",
+      // -- Swagger UI v3 (OpenAPI)
+      "/v3/api-docs/**",
+      "/swagger-ui/**"
+  };
 
-    @Bean
-    @Override
-    protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
-        return new NullAuthenticatedSessionStrategy();
-    }
+  private final UserDetailsServiceImpl userDetailsService;
+  private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        SimpleAuthorityMapper grantedAuthorityMapper = new SimpleAuthorityMapper();
+  @Bean
+  @Override
+  protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+    return new NullAuthenticatedSessionStrategy();
+  }
 
-        KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
-        keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(grantedAuthorityMapper);
-        auth.authenticationProvider(keycloakAuthenticationProvider);
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
-    }
+  @Autowired
+  public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+    SimpleAuthorityMapper grantedAuthorityMapper = new SimpleAuthorityMapper();
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        super.configure(http);
-        http
-                .csrf().disable()
-                .cors().disable()
-                .authorizeRequests()
-                    .antMatchers(HttpMethod.POST, REGISTRATION_URL).permitAll()
-                    .antMatchers(TELEGRAM_LOGIN_URL).permitAll()
-                    .anyRequest().authenticated()
-                    .and()
-                .httpBasic()
-                    .and()
-                .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and()
-                .requestCache()
-                    .requestCache(new NullRequestCache());
-    }
+    KeycloakAuthenticationProvider keycloakAuthenticationProvider =
+        keycloakAuthenticationProvider();
+    keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(grantedAuthorityMapper);
+    auth.authenticationProvider(keycloakAuthenticationProvider);
+    auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
+  }
 
-    @Bean
-    @Override
-    protected KeycloakAuthenticationProcessingFilter keycloakAuthenticationProcessingFilter() throws Exception {
-        RequestMatcher requestMatcher =
-                new OrRequestMatcher(
-                        new AntPathRequestMatcher(DEFAULT_LOGIN_URL),
-                        new QueryParamPresenceRequestMatcher(OAuth2Constants.ACCESS_TOKEN),
-                        new IgnoreBasicAuthRequestHeaderRequestMatcher()
-                );
-        return new KeycloakAuthenticationProcessingFilter(authenticationManagerBean(), requestMatcher);
-    }
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    super.configure(http);
+    http
+        .csrf().disable()
+        .cors().disable()
+        .authorizeRequests()
+          .antMatchers(HttpMethod.POST, REGISTRATION_URL).permitAll()
+          .antMatchers(TELEGRAM_LOGIN_URL).permitAll()
+          .antMatchers(SWAGGER_WHITELIST).permitAll()
+          .antMatchers(HttpMethod.OPTIONS, EVERY_URL).permitAll()
+          .anyRequest().authenticated()
+          .and()
+        .httpBasic()
+          .and()
+        .sessionManagement()
+          .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+          .and()
+        .requestCache()
+          .requestCache(new NullRequestCache());
+  }
+
+  @Bean
+  @Override
+  protected KeycloakAuthenticationProcessingFilter keycloakAuthenticationProcessingFilter()
+      throws Exception {
+    RequestMatcher requestMatcher =
+        new OrRequestMatcher(
+            new AntPathRequestMatcher(DEFAULT_LOGIN_URL),
+            new QueryParamPresenceRequestMatcher(OAuth2Constants.ACCESS_TOKEN),
+            new IgnoreBasicAuthRequestHeaderRequestMatcher()
+        );
+    return new KeycloakAuthenticationProcessingFilter(authenticationManagerBean(), requestMatcher);
+  }
 }

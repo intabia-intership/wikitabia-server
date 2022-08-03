@@ -1,5 +1,7 @@
 server:
   port: ${WIKITABIA_SERVER_PORT}
+  forward-headers-strategy: framework
+
 
 spring:
   profiles:
@@ -31,3 +33,10 @@ keycloak:
   credentials:
     secret: ${KEYCLOAK_CLIENT_SECRET}
   bearer-only: true
+
+wikitabia:
+  server:
+    url: ${WIKITABIA_SERVER_URL}
+  keycloak:
+    url: ${KEYCLOAK_URL}
+    realm: ${KEYCLOAK_REALM}

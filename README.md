@@ -89,15 +89,16 @@ Deploy на стенд производится через GitLab CI/CD.
 
 ## Переменные среды
 ### Для [docker-compose.yaml](docker-compose.yaml)
-| Переменная    | Описание                     |
-|---------------|------------------------------|
-| DB_USER       | логин пользователя БД        |
-| DB_PASS       | пароль пользователя БД       |
-| DB_NAME       | имя БД                       |
-| DB_PORT       | порт БД                      |
-| KEYCLOAK_USER | логин пользователя keycloak  |
-| KEYCLOAK_PASS | пароль пользователя keycloak |
-| KEYCLOAK_PORT | порт keycloak                |
+| Переменная                  | Описание                     |
+|-----------------------------|------------------------------|
+| DB_USER                     | логин пользователя БД        |
+| DB_PASS                     | пароль пользователя БД       |
+| DB_NAME                     | имя БД                       |
+| DB_PORT                     | порт БД                      |
+| KEYCLOAK_USER               | логин пользователя keycloak  |
+| KEYCLOAK_PASS               | пароль пользователя keycloak |
+| KEYCLOAK_PORT               | порт keycloak                |
+| WIKITABIA_SERVER_OUTER_PORT | внешний порт wikitabia       |
 
 ### Для [application.yml](src/main/resources/application.yml)
 | Переменная             | Описание                                                   |

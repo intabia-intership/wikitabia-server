@@ -5,7 +5,7 @@ import com.intabia.wikitabia.dto.authority.response.AuthorityResponseDto;
 import java.util.UUID;
 
 /**
- * интерфес слоя сервисов для работы с authority.
+ * интерфейс слоя сервисов для работы с authority.
  */
 public interface AuthorityService {
   /**

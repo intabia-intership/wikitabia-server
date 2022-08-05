@@ -12,8 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.UUID;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,15 +23,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * документация на <a href="https://wikitabia.intabia.ru/swagger-ui.html" />.
- */
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 @Tag(name = "Пользователь API", description = "API для операций над пользователями")
+@Slf4j(topic = "com.intabia.wikitabia.logger")
 public class UserRestController {
-  private final Logger logger = LoggerFactory.getLogger("com.intabia.wikitabia.logger");
   private final UserService userService;
 
   @Operation(summary = "Создать нового пользователя")
@@ -42,8 +38,10 @@ public class UserRestController {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public UserResponseDto createUser(
       @RequestBody @Valid UserCreateRequestDto userCreateRequestDto) {
-    logger.debug("Принят запрос на создание пользователя, arg1={}", userCreateRequestDto);
-    return userService.createUser(userCreateRequestDto);
+    log.debug("Принят запрос на создание пользователя {}", userCreateRequestDto);
+    UserResponseDto response = userService.createUser(userCreateRequestDto);
+    log.debug("Запрос на создание пользователя обработан успешно: {}", response);
+    return response;
   }
 
   @Operation(summary = "Получить пользователя по id")
@@ -52,8 +50,10 @@ public class UserRestController {
   public UserResponseDto getUser(
       @Parameter(description = "id пользователя, по которому выполняется поиск")
       @PathVariable UUID id) {
-    logger.debug("Принят запрос на получение пользователя, arg1={}", id);
-    return userService.getUser(id);
+    log.debug("Принят запрос на получение пользователя с id {}", id);
+    UserResponseDto response = userService.getUser(id);
+    log.debug("Запрос на получение пользователя обработан успешно: {}", response);
+    return response;
   }
 
   @Operation(summary = "Изменить пользователя по id")
@@ -64,9 +64,10 @@ public class UserRestController {
       @RequestBody @Valid UserUpdateRequestDto userUpdateRequestDto,
       @Parameter(description = "id пользователя, которого необходимо изменить")
       @PathVariable UUID id) {
-    logger.debug("Принят запрос на обновление пользователя, arg1={}, arg2={}", userUpdateRequestDto,
-        id);
-    return userService.updateUser(userUpdateRequestDto, id);
+    log.debug("Принят запрос на обновление пользователя {} с id {}", userUpdateRequestDto, id);
+    UserResponseDto response = userService.updateUser(userUpdateRequestDto, id);
+    log.debug("Запрос на обновление пользователя обработан успешно: {}", response);
+    return response;
   }
 
   @Operation(summary = "Удалить пользователя по id")
@@ -75,8 +76,10 @@ public class UserRestController {
   public UUID deleteUser(
       @Parameter(description = "id пользователя, которого необходимо удалить")
       @PathVariable UUID id) {
-    logger.debug("Принят запрос на удаление пользователя, arg1={}", id);
-    return userService.deleteUser(id);
+    log.debug("Принят запрос на удаление пользователя с id {}", id);
+    UUID response = userService.deleteUser(id);
+    log.debug("Запрос на удаление пользователя обработан успешно: {}", response);
+    return response;
   }
 
   @Operation(summary = "Назначить пользователю телеграм-логин", deprecated = true)
@@ -86,8 +89,11 @@ public class UserRestController {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public UserResponseDto addTelegramLogin(@RequestBody UserUpdateRequestDto user,
                                           @PathVariable UUID id) {
-    logger.debug("Принят запрос на назначение пользователю логина в телеграм, arg1={}, arg2={}",
+    log.debug("Принят запрос на назначение логина в телеграм пользователю {} с id {}",
         user, id);
-    return userService.addLogin(user, id);
+    UserResponseDto response = userService.addLogin(user, id);
+    log.debug("Запрос на назначение логина в телеграм пользователю обработан успешно: {}",
+        response);
+    return response;
   }
 }

@@ -11,9 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * javadoc заглушка, чтобы checkstyle не ругался.
- */
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api")
@@ -27,12 +24,6 @@ public class TelegramRestController {
     return resourceService.createResourceFromTelegram(resource);
   }
 
-  /**
-   * javadoc заглушка, чтобы checkstyle не ругался.
-   *
-   * @param tag - javadoc заглушка, чтобы checkstyle не ругался
-   * @return javadoc заглушка, чтобы checkstyle не ругался
-   */
   @PostMapping(value = "/telegram/resource/filter-by-tag/",
       consumes = "application/json", produces = "application/json")
   public List<ResourceDto> getResourcePageByTag(@RequestBody TagDto tag) {

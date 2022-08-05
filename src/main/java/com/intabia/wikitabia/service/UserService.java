@@ -6,7 +6,7 @@ import com.intabia.wikitabia.dto.user.response.UserResponseDto;
 import java.util.UUID;
 
 /**
- * интерфес слоя сервисов для работы с user.
+ * интерфейс слоя сервисов для работы с user.
  */
 public interface UserService {
   /**
@@ -42,7 +42,7 @@ public interface UserService {
   UserResponseDto getUser(UUID id);
 
   /**
-   * назачение пользователю telegram-логина.
+   * назначение пользователю telegram-логина.
    *
    * @param user - пользователь, которому необходимо назначить telegram-логин
    * @return возвращает измененного пользователя

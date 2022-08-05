@@ -75,9 +75,9 @@ public class ResourceServiceImpl implements ResourceService {
   }
 
   /**
-   * javadoc заглушка, чтобы checkstyle не ругался.
+   * увеличение рейтинга ресурса.
    *
-   * @param id - javadoc заглушка, чтобы checkstyle не ругался
+   * @param id - id ресурса
    */
   public void incrementRating(UUID id) {
     ResourceEntity resourceEntity = resourcesDao.findById(id)

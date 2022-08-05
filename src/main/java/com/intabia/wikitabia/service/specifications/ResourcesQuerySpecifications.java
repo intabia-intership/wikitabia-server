@@ -12,16 +12,16 @@ import javax.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
- * javadoc заглушка, чтобы checkstyle не ругался.
+ * спецификация для запросов к ресурсам.
  */
 public class ResourcesQuerySpecifications {
 
   /**
-   * javadoc заглушка, чтобы checkstyle не ругался.
+   * фильтрация по названию ресурса и тэгам.
    *
-   * @param name     - javadoc заглушка, чтобы checkstyle не ругался
-   * @param tagsName - javadoc заглушка, чтобы checkstyle не ругался
-   * @return javadoc заглушка, чтобы checkstyle не ругался
+   * @param name     - название ресурса
+   * @param tagsName - список тэгов
+   * @return возвращает спецификацию, фильтрующую ресурсы по названию и тэгам
    */
   public static Specification<ResourceEntity> filter(String name, List<String> tagsName) {
     return (root, query, criteriaBuilder) -> {

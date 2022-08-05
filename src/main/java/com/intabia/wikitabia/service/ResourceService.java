@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 
 /**
- * интерфейс для содежащий методы сервисного слоя Resources.
+ * интерфейс содержащий методы сервисного слоя Resources.
  */
 public interface ResourceService {
   ResourceDto createResource(ResourceDto resourceDto);

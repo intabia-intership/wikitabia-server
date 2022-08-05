@@ -11,7 +11,7 @@ import lombok.With;
  * dto для получения сущности authority в запросе.
  */
 @Data
-@Builder
+@Builder(toBuilder = true)
 @With
 @NoArgsConstructor
 @AllArgsConstructor

@@ -2,7 +2,7 @@ package com.intabia.wikitabia.service.implementation;
 
 import com.intabia.wikitabia.dto.TagDto;
 import com.intabia.wikitabia.exception.EntityNotFoundException;
-import com.intabia.wikitabia.mappers.TagsMapper;
+import com.intabia.wikitabia.mappers.entity.TagsMapper;
 import com.intabia.wikitabia.model.TagEntity;
 import com.intabia.wikitabia.repository.TagsDao;
 import com.intabia.wikitabia.service.TagsService;

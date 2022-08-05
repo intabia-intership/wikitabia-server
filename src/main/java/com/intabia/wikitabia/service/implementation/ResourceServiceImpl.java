@@ -2,7 +2,7 @@ package com.intabia.wikitabia.service.implementation;
 
 import com.intabia.wikitabia.dto.ResourceDto;
 import com.intabia.wikitabia.exception.EntityNotFoundException;
-import com.intabia.wikitabia.mappers.ResourcesMapper;
+import com.intabia.wikitabia.mappers.entity.ResourcesMapper;
 import com.intabia.wikitabia.model.ResourceEntity;
 import com.intabia.wikitabia.model.UserEntity;
 import com.intabia.wikitabia.repository.ResourcesDao;

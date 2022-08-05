@@ -34,7 +34,7 @@ public class AuthorityRestController {
   @ApiResponse(responseCode = "200", description = "Роль создана")
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public AuthorityResponseDto saveAuthority(
+  public AuthorityResponseDto createAuthority(
       @RequestBody @Valid AuthorityRequestDto authorityRequestDto) {
     return authorityService.createAuthority(authorityRequestDto);
   }

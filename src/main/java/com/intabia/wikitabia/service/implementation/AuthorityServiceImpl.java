@@ -2,14 +2,12 @@ package com.intabia.wikitabia.service.implementation;
 
 import com.intabia.wikitabia.dto.authority.request.AuthorityRequestDto;
 import com.intabia.wikitabia.dto.authority.response.AuthorityResponseDto;
-import com.intabia.wikitabia.dto.util.FieldRulesConstant;
 import com.intabia.wikitabia.exception.EntityNotFoundException;
 import com.intabia.wikitabia.exception.UniqueFieldException;
-import com.intabia.wikitabia.mappers.AuthoritiesMapper;
+import com.intabia.wikitabia.mappers.entity.AuthoritiesMapper;
 import com.intabia.wikitabia.model.AuthorityEntity;
 import com.intabia.wikitabia.repository.AuthorityDao;
 import com.intabia.wikitabia.service.AuthorityService;
-import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +27,7 @@ public class AuthorityServiceImpl implements AuthorityService {
   @Override
   public AuthorityResponseDto createAuthority(AuthorityRequestDto authorityDto) {
     if (authorityDao.existsByName(authorityDto.getName())) {
-      throw new UniqueFieldException(AuthorityDto.class, FRIENDLY_ROLE_NAME,
+      throw new UniqueFieldException(AuthorityRequestDto.class, FRIENDLY_ROLE_NAME,
           authorityDto.getName());
     }
     AuthorityEntity authority = authoritiesMapper.dtoToEntity(authorityDto);
@@ -44,7 +42,7 @@ public class AuthorityServiceImpl implements AuthorityService {
     AuthorityEntity sameAuthority = authorityDao.findAuthorityEntityByName(authorityDto.getName())
         .orElse(null);
     if (sameAuthority != null && !sameAuthority.getId().equals(id)) {
-      throw new UniqueFieldException(AuthorityDto.class, FRIENDLY_ROLE_NAME,
+      throw new UniqueFieldException(AuthorityRequestDto.class, FRIENDLY_ROLE_NAME,
           authorityDto.getName());
     }
 

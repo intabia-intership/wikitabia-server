@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:src/main/java/com/intabia/wikitabia/service/Specifications/ResourcesQuerySpecifications.java
-package com.intabia.wikitabia.service.Specifications;
-========
 package com.intabia.wikitabia.service.specifications;
->>>>>>>> dcf7538 (Добавил тесты в проект):src/main/java/com/intabia/wikitabia/service/specifications/ResourcesQuerySpecifications.java
 
 import com.intabia.wikitabia.model.ResourceEntity;
 import com.intabia.wikitabia.model.ResourceEntity_;

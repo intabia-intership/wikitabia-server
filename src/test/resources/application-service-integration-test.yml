@@ -1,4 +1,4 @@
 spring:
   datasource:
-    url: jdbc:tc:postgresql:14:///integration-test=db?serverTimezone=UTC
+    url: jdbc:tc:postgresql:14:///test-db?serverTimezone=UTC&TC_ROLE=postgres
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver

@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
  */
 @Schema(description = "Пользователь")
 @Data
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponseDto {

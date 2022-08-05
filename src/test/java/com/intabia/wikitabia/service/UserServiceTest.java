@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.fail;
 import com.intabia.wikitabia.dto.user.request.UserCreateRequestDto;
 import com.intabia.wikitabia.dto.user.request.UserUpdateRequestDto;
 import com.intabia.wikitabia.dto.user.response.UserResponseDto;
-import com.intabia.wikitabia.exception.DataNotFoundException;
+import com.intabia.wikitabia.exception.EntityNotFoundException;
 import com.intabia.wikitabia.exception.InvalidBodyException;
 import com.intabia.wikitabia.model.AuthorityEntity;
 import com.intabia.wikitabia.model.UserEntity;
@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,18 +37,18 @@ public class UserServiceTest extends ServiceTestWithPostgresContainer {
   @Autowired
   private PasswordEncoder passwordEncoder;
 
+  @Override
+  @BeforeEach
+  public void cleanDB() {
+    userDao.deleteAll();
+    authorityDao.deleteAll();
+  }
+
   @Test
   public void createUser__whenEverythingFine__thenSaveUser() {
-    AuthorityEntity savedAuthority = authorityDao.save(TestConstant.USER_AUTHORITY_TO_SAVE);
-    authorityDao.flush();
+    authorityDao.save(TestConstant.DEFAULT_AUTHORITY_TO_SAVE());
 
-    UserCreateRequestDto userCreate = UserCreateRequestDto.builder()
-        .firstName("Ivan")
-        .lastName("Ivanov")
-        .login("Vano")
-        .password("123456")
-        .authorities(List.of(savedAuthority.getName()))
-        .build();
+    UserCreateRequestDto userCreate = TestConstant.DEFAULT_USER_CREATE_REQUEST_DTO();
     UserResponseDto savedUser = userService.createUser(userCreate);
 
     Optional<UserEntity> opt = userDao.findById(savedUser.getId());
@@ -61,60 +62,27 @@ public class UserServiceTest extends ServiceTestWithPostgresContainer {
 
   @Test
   public void createUser__whenUserLoginAlreadyTaken__thenInvalidBodyException() {
-    AuthorityEntity savedAuthority = authorityDao.save(TestConstant.USER_AUTHORITY_TO_SAVE);
-    authorityDao.flush();
+    AuthorityEntity savedAuthority = authorityDao.save(TestConstant.DEFAULT_AUTHORITY_TO_SAVE());
+    userDao.save(TestConstant.DEFAULT_USER_TO_SAVE().withAuthorities(Set.of(savedAuthority)));
 
-    UserEntity user = UserEntity.builder()
-        .firstName("Ivan")
-        .lastName("Ivanov")
-        .login("Vano")
-        .telegramLogin("Vano_telega")
-        .password("123456")
-        .authorities(Set.of(savedAuthority))
-        .build();
-    userDao.save(user);
-    userDao.flush();
-
-    UserCreateRequestDto userCreate = UserCreateRequestDto.builder()
-        .firstName("Peter")
-        .lastName("Peterov")
-        .login(user.getLogin())
-        .password("123456")
-        .authorities(List.of(savedAuthority.getName()))
-        .build();
+    UserCreateRequestDto userCreate = TestConstant.DEFAULT_USER_CREATE_REQUEST_DTO()
+        .withFirstName("Peter")
+        .withLastName("Peterov")
+        .withPassword("123456");
     assertThatExceptionOfType(InvalidBodyException.class).isThrownBy(() ->
         userService.createUser(userCreate));
   }
 
   @Test
   public void createUser__whenUserAuthorityNotExist__thenInvalidBodyException() {
-    UserCreateRequestDto userCreate = UserCreateRequestDto.builder()
-        .firstName("Ivan")
-        .lastName("Ivanov")
-        .login("Vano")
-        .password("123456")
-        .authorities(List.of("USER"))
-        .build();
-
     assertThatExceptionOfType(InvalidBodyException.class).isThrownBy(() ->
-        userService.createUser(userCreate));
+        userService.createUser(TestConstant.DEFAULT_USER_CREATE_REQUEST_DTO()));
   }
 
   @Test
   public void getUser__whenEverythingFine__thenGetUser() {
-    AuthorityEntity savedAuthority = authorityDao.save(TestConstant.USER_AUTHORITY_TO_SAVE);
-    authorityDao.flush();
-
-    UserEntity user = UserEntity.builder()
-        .firstName("Ivan")
-        .lastName("Ivanov")
-        .login("Vano")
-        .telegramLogin("Vano_telega")
-        .password("123456")
-        .authorities(Set.of(savedAuthority))
-        .build();
-    UserEntity savedUser = userDao.save(user);
-    userDao.flush();
+    AuthorityEntity savedAuthority = authorityDao.save(TestConstant.DEFAULT_AUTHORITY_TO_SAVE());
+    UserEntity savedUser = userDao.save(TestConstant.DEFAULT_USER_TO_SAVE().withAuthorities(Set.of(savedAuthority)));
 
     UserResponseDto getUser = userService.getUser(savedUser.getId());
 
@@ -123,35 +91,23 @@ public class UserServiceTest extends ServiceTestWithPostgresContainer {
 
   @Test
   public void getUser__whenUserNotExist__thenDataNotFoundException() {
-    assertThatExceptionOfType(DataNotFoundException.class).isThrownBy(() ->
-        userService.getUser(TestConstant.TEST_UUID));
+    assertThatExceptionOfType(EntityNotFoundException.class).isThrownBy(() ->
+        userService.getUser(TestConstant.DEFAULT_UUID));
   }
 
   @Test
   public void updateUser__whenEverythingFine__thenUpdateUser() {
-    AuthorityEntity savedAuthority1 = authorityDao.save(TestConstant.USER_AUTHORITY_TO_SAVE);
-    AuthorityEntity savedAuthority2 = authorityDao.save(TestConstant.USER_AUTHORITY_TO_SAVE.withName("ADMIN"));
-    authorityDao.flush();
+    AuthorityEntity savedAuthority = authorityDao.save(TestConstant.DEFAULT_AUTHORITY_TO_SAVE());
+    authorityDao.save(TestConstant.DEFAULT_AUTHORITY_TO_SAVE().withName("ADMIN"));
+    UserEntity savedUser = userDao.save(TestConstant.DEFAULT_USER_TO_SAVE().withAuthorities(Set.of(savedAuthority)));
 
-    UserEntity user = UserEntity.builder()
-        .firstName("Ivan")
-        .lastName("Ivanov")
-        .login("Vano")
-        .telegramLogin("Vano_telega")
-        .password("123456")
-        .authorities(Set.of(savedAuthority1))
-        .build();
-    UserEntity savedUser = userDao.save(user);
-    userDao.flush();
-
-    UserUpdateRequestDto userUpdate = UserUpdateRequestDto.builder()
-        .firstName("Peter")
-        .lastName("Peterov")
-        .login("Pit")
-        .telegramLogin("Pit_telega")
-        .password("654321")
-        .authorities(List.of(savedAuthority2.getName()))
-        .build();
+    UserUpdateRequestDto userUpdate = TestConstant.DEFAULT_USER_UPDATE_REQUEST_DTO()
+        .withFirstName("Peter")
+        .withLastName("Peterov")
+        .withLogin("Pit")
+        .withTelegramLogin("Pit_telega")
+        .withPassword("654321")
+        .withAuthorities(List.of("ADMIN"));
     UserResponseDto updatedUser = userService.updateUser(userUpdate, savedUser.getId());
 
     Optional<UserEntity> opt = userDao.findById(savedUser.getId());
@@ -165,141 +121,69 @@ public class UserServiceTest extends ServiceTestWithPostgresContainer {
 
   @Test
   public void updateUser__whenUserLoginAlreadyTaken__thenInvalidBodyException() {
-    AuthorityEntity savedAuthority = authorityDao.save(TestConstant.USER_AUTHORITY_TO_SAVE);
-    authorityDao.flush();
+    AuthorityEntity savedAuthority = authorityDao.save(TestConstant.DEFAULT_AUTHORITY_TO_SAVE());
+    UserEntity savedUser = userDao.save(TestConstant.DEFAULT_USER_TO_SAVE().withAuthorities(Set.of(savedAuthority)));
+    UserEntity user = TestConstant.DEFAULT_USER_TO_SAVE()
+        .withFirstName("Peter")
+        .withLastName("Peterov")
+        .withLogin("Pit")
+        .withTelegramLogin("Pit_telega")
+        .withPassword("123456")
+        .withAuthorities(Set.of(savedAuthority));
+    userDao.save(user);
 
-    UserEntity user1 = UserEntity.builder()
-        .firstName("Ivan")
-        .lastName("Ivanov")
-        .login("Vano")
-        .telegramLogin("Vano_telega")
-        .password("123456")
-        .authorities(Set.of(savedAuthority))
-        .build();
-    UserEntity user2 = UserEntity.builder()
-        .firstName("Peter")
-        .lastName("Peterov")
-        .login("Pit")
-        .telegramLogin("Pit_telega")
-        .password("123456")
-        .authorities(Set.of(savedAuthority))
-        .build();
-    userDao.save(user1);
-    UserEntity savedUser = userDao.save(user2);
-    userDao.flush();
-
-    UserUpdateRequestDto userUpdate = UserUpdateRequestDto.builder()
-        .firstName(user2.getFirstName())
-        .lastName(user2.getLastName())
-        .login(user1.getLogin())
-        .telegramLogin(user2.getTelegramLogin())
-        .password(user2.getPassword())
-        .authorities(List.of(savedAuthority.getName()))
-        .build();
+    UserUpdateRequestDto userUpdate = TestConstant.DEFAULT_USER_UPDATE_REQUEST_DTO()
+        .withLogin("Pit");
     assertThatExceptionOfType(InvalidBodyException.class).isThrownBy(() ->
         userService.updateUser(userUpdate, savedUser.getId()));
   }
 
   @Test
   public void updateUser__whenUserTelegramLoginAlreadyTaken__thenInvalidBodyException() {
-    AuthorityEntity savedAuthority = authorityDao.save(TestConstant.USER_AUTHORITY_TO_SAVE);
-    authorityDao.flush();
+    AuthorityEntity savedAuthority = authorityDao.save(TestConstant.DEFAULT_AUTHORITY_TO_SAVE());
+    UserEntity savedUser = userDao.save(TestConstant.DEFAULT_USER_TO_SAVE().withAuthorities(Set.of(savedAuthority)));
+    UserEntity user = TestConstant.DEFAULT_USER_TO_SAVE()
+        .withFirstName("Peter")
+        .withLastName("Peterov")
+        .withLogin("Pit")
+        .withTelegramLogin("Pit_telega")
+        .withPassword("654321")
+        .withAuthorities(Set.of(savedAuthority));
+    userDao.save(user);
 
-    UserEntity user1 = UserEntity.builder()
-        .firstName("Ivan")
-        .lastName("Ivanov")
-        .login("Vano")
-        .telegramLogin("Vano_telega")
-        .password("123456")
-        .authorities(Set.of(savedAuthority))
-        .build();
-    UserEntity user2 = UserEntity.builder()
-        .firstName("Peter")
-        .lastName("Peterov")
-        .login("Pit")
-        .telegramLogin("Pit_telega")
-        .password("123456")
-        .authorities(Set.of(savedAuthority))
-        .build();
-    userDao.save(user1);
-    UserEntity savedUser = userDao.save(user2);
-    userDao.flush();
-
-    UserUpdateRequestDto userUpdate = UserUpdateRequestDto.builder()
-        .firstName(user2.getFirstName())
-        .lastName(user2.getLastName())
-        .login(user2.getLogin())
-        .telegramLogin(user1.getTelegramLogin())
-        .password(user2.getPassword())
-        .authorities(List.of(savedAuthority.getName()))
-        .build();
+    UserUpdateRequestDto userUpdate = TestConstant.DEFAULT_USER_UPDATE_REQUEST_DTO()
+        .withTelegramLogin("Pit_telega");
     assertThatExceptionOfType(InvalidBodyException.class).isThrownBy(() ->
         userService.updateUser(userUpdate, savedUser.getId()));
   }
 
   @Test
   public void updateUser__whenUserAuthorityNotExist__thenInvalidBodyException() {
-    AuthorityEntity savedAuthority = authorityDao.save(TestConstant.USER_AUTHORITY_TO_SAVE);
-    authorityDao.flush();
+    AuthorityEntity savedAuthority = authorityDao.save(TestConstant.DEFAULT_AUTHORITY_TO_SAVE());
+    UserEntity savedUser = userDao.save(TestConstant.DEFAULT_USER_TO_SAVE().withAuthorities(Set.of(savedAuthority)));
 
-    UserEntity user = UserEntity.builder()
-        .firstName("Ivan")
-        .lastName("Ivanov")
-        .login("Vano")
-        .telegramLogin("Vano_telega")
-        .password("123456")
-        .authorities(Set.of(savedAuthority))
-        .build();
-    UserEntity savedUser = userDao.save(user);
-    userDao.flush();
-
-    UserUpdateRequestDto userUpdate = UserUpdateRequestDto.builder()
-        .firstName(user.getFirstName())
-        .lastName(user.getLastName())
-        .login(user.getLogin())
-        .telegramLogin(user.getTelegramLogin())
-        .password(user.getPassword())
-        .authorities(List.of("NOT_EXIST"))
-        .build();
+    UserUpdateRequestDto userUpdate = TestConstant.DEFAULT_USER_UPDATE_REQUEST_DTO()
+        .withLogin("Pit")
+        .withTelegramLogin("Pit_telega")
+        .withAuthorities(List.of("NOT_EXIST"));
     assertThatExceptionOfType(InvalidBodyException.class).isThrownBy(() ->
         userService.updateUser(userUpdate, savedUser.getId()));
   }
 
   @Test
   public void updateUser__whenUserNotExist__thenDataNotFoundException() {
-    AuthorityEntity savedAuthority = authorityDao.save(TestConstant.USER_AUTHORITY_TO_SAVE);
-    authorityDao.flush();
+    authorityDao.save(TestConstant.DEFAULT_AUTHORITY_TO_SAVE());
 
-    UserUpdateRequestDto userUpdate = UserUpdateRequestDto.builder()
-        .firstName("Ivan")
-        .lastName("Ivanov")
-        .login("Vano")
-        .telegramLogin("Vano_telega")
-        .password("123456")
-        .authorities(List.of(savedAuthority.getName()))
-        .build();
-    assertThatExceptionOfType(DataNotFoundException.class).isThrownBy(() ->
-        userService.updateUser(userUpdate, TestConstant.TEST_UUID));
+    assertThatExceptionOfType(EntityNotFoundException.class).isThrownBy(() ->
+        userService.updateUser(TestConstant.DEFAULT_USER_UPDATE_REQUEST_DTO(), TestConstant.DEFAULT_UUID));
   }
 
   @Test
   public void deleteUser__whenEverythingFine__thenSaveUser() {
-    AuthorityEntity savedAuthority = authorityDao.save(TestConstant.USER_AUTHORITY_TO_SAVE);
-    authorityDao.flush();
-
-    UserEntity user = UserEntity.builder()
-        .firstName("Ivan")
-        .lastName("Ivanov")
-        .login("Vano")
-        .telegramLogin("Vano_telega")
-        .password("123456")
-        .authorities(Set.of(savedAuthority))
-        .build();
-    UserEntity savedUser = userDao.save(user);
-    userDao.flush();
+    AuthorityEntity savedAuthority = authorityDao.save(TestConstant.DEFAULT_AUTHORITY_TO_SAVE());
+    UserEntity savedUser = userDao.save(TestConstant.DEFAULT_USER_TO_SAVE().withAuthorities(Set.of(savedAuthority)));
 
     UUID deletedUserId = userService.deleteUser(savedUser.getId());
-    userDao.flush();
 
     if (userDao.existsById(savedUser.getId())) {
       fail("Пользователь все еще существует");
@@ -310,7 +194,7 @@ public class UserServiceTest extends ServiceTestWithPostgresContainer {
 
   @Test
   public void deleteUser__whenUserNotExist__thenDataNotFoundException() {
-    assertThatExceptionOfType(DataNotFoundException.class)
-        .isThrownBy(() -> userService.deleteUser(TestConstant.TEST_UUID));
+    assertThatExceptionOfType(EntityNotFoundException.class)
+        .isThrownBy(() -> userService.deleteUser(TestConstant.DEFAULT_UUID));
   }
 }

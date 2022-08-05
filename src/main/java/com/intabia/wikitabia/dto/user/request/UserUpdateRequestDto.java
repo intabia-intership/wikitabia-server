@@ -14,7 +14,7 @@ import lombok.With;
  * dto класс для модификации пользователя.
  */
 @Data
-@Builder
+@Builder(toBuilder = true)
 @With
 @NoArgsConstructor
 @AllArgsConstructor

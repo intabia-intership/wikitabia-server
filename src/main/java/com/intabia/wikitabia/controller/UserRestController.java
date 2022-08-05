@@ -32,6 +32,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserRestController {
   private final UserService userService;
 
+  @Operation(summary = "Создать нового пользователя")
+  @ApiResponse(responseCode = "200", description = "Пользователь создан")
+  @NoSecurityRequirements
+  @PostMapping(value = "/user", consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public UserResponseDto createUser(
+      @RequestBody @Valid UserCreateRequestDto userCreateRequestDto) {
+    return userService.createUser(userCreateRequestDto);
+  }
+
   @Operation(summary = "Получить пользователя по id")
   @ApiResponse(responseCode = "200", description = "Пользователь найден")
   @GetMapping("/user/{id}")
@@ -39,15 +49,6 @@ public class UserRestController {
       @Parameter(description = "id пользователя, по которому выполняется поиск")
       @PathVariable UUID id) {
     return userService.getUser(id);
-  }
-
-  @Operation(summary = "Удалить пользователя по id")
-  @ApiResponse(responseCode = "200", description = "Пользователь удален")
-  @DeleteMapping("/user/{id}")
-  public UUID deleteUser(
-      @Parameter(description = "id пользователя, которого необходимо удалить")
-      @PathVariable UUID id) {
-    return userService.deleteUser(id);
   }
 
   @Operation(summary = "Изменить пользователя по id")
@@ -61,14 +62,13 @@ public class UserRestController {
     return userService.updateUser(userUpdateRequestDto, id);
   }
 
-  @Operation(summary = "Создать нового пользователя")
-  @ApiResponse(responseCode = "200", description = "Пользователь создан")
-  @NoSecurityRequirements
-  @PostMapping(value = "/user", consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
-  public UserResponseDto createUser(
-      @RequestBody @Valid UserCreateRequestDto userCreateRequestDto) {
-    return userService.createUser(userCreateRequestDto);
+  @Operation(summary = "Удалить пользователя по id")
+  @ApiResponse(responseCode = "200", description = "Пользователь удален")
+  @DeleteMapping("/user/{id}")
+  public UUID deleteUser(
+      @Parameter(description = "id пользователя, которого необходимо удалить")
+      @PathVariable UUID id) {
+    return userService.deleteUser(id);
   }
 
   @Operation(summary = "Назначить пользователю телеграм-логин", deprecated = true)

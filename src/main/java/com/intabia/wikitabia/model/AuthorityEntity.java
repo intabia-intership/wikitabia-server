@@ -18,7 +18,7 @@ import lombok.With;
 @Entity
 @Table(name = "authority")
 @Data
-@Builder
+@Builder(toBuilder = true)
 @With
 @AllArgsConstructor
 @NoArgsConstructor

@@ -1,7 +1,6 @@
 package com.intabia.wikitabia.configuration;
 
 import com.intabia.wikitabia.configuration.filter.IgnoreBasicAuthRequestHeaderRequestMatcher;
-import com.intabia.wikitabia.service.implementation.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
@@ -17,6 +16,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
@@ -36,7 +36,7 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   private static final String TELEGRAM_LOGIN_URL = "/api/telegram-login";
   private static final String DEFAULT_LOGIN_URL = "/sso/login";
   private static final String EVERY_URL = "/**";
-  private static final String[] SWAGGER_WHITELIST = {
+  private static final String[] SWAGGER_URL_WHITELIST = {
       // -- Swagger UI v2
       "/v2/api-docs",
       "/swagger-resources",
@@ -50,7 +50,7 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
       "/swagger-ui/**"
   };
 
-  private final UserDetailsServiceImpl userDetailsService;
+  private final UserDetailsService userDetailsService;
   private final PasswordEncoder passwordEncoder;
 
   @Bean
@@ -85,7 +85,7 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         .authorizeRequests()
           .antMatchers(HttpMethod.POST, REGISTRATION_URL).permitAll()
           .antMatchers(TELEGRAM_LOGIN_URL).permitAll()
-          .antMatchers(SWAGGER_WHITELIST).permitAll()
+          .antMatchers(SWAGGER_URL_WHITELIST).permitAll()
           .antMatchers(HttpMethod.OPTIONS, EVERY_URL).permitAll()
           .anyRequest().authenticated()
           .and()

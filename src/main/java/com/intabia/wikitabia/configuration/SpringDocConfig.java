@@ -24,7 +24,7 @@ import org.springframework.http.MediaType;
 @Configuration
 public class SpringDocConfig {
   private static final String BASIC = "basic";
-  private static final String OAUTH2_AUTH_CODE = "keycloak authorization code";
+  private static final String OAUTH2_WITH_AUTHORIZATION_CODE_FLOW = "keycloak authorization code";
   private static final String BEARER_JWT = "keycloak jwt";
 
   @Value("${wikitabia.server.url:http://localhost:8080}")
@@ -59,14 +59,15 @@ public class SpringDocConfig {
   private SecurityRequirement getSecurityRequirement() {
     return new SecurityRequirement()
         .addList(BASIC)
-        .addList(OAUTH2_AUTH_CODE)
+        .addList(OAUTH2_WITH_AUTHORIZATION_CODE_FLOW)
         .addList(BEARER_JWT);
   }
 
   private Components getComponents() {
     return new Components()
         .addSecuritySchemes(BASIC, getBasicSecurityScheme())
-        .addSecuritySchemes(OAUTH2_AUTH_CODE, getOauth2AuthCodeFlowSecurityScheme())
+        .addSecuritySchemes(OAUTH2_WITH_AUTHORIZATION_CODE_FLOW,
+            getOauth2WithAuthorizationCodeFlowSecurityScheme())
         .addSecuritySchemes(BEARER_JWT, getBearerJwtSecurityScheme());
   }
 
@@ -76,7 +77,7 @@ public class SpringDocConfig {
         .scheme("basic");
   }
 
-  private SecurityScheme getOauth2AuthCodeFlowSecurityScheme() {
+  private SecurityScheme getOauth2WithAuthorizationCodeFlowSecurityScheme() {
     OAuthFlows authorizationCodeFlow =
         new OAuthFlows()
             .authorizationCode(new OAuthFlow()

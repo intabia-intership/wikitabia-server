@@ -23,7 +23,7 @@ import lombok.With;
 @Entity
 @Table(name = "users")
 @Data
-@Builder
+@Builder(toBuilder = true)
 @With
 @AllArgsConstructor
 @NoArgsConstructor

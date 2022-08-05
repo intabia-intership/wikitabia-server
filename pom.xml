@@ -104,8 +104,7 @@
         <spring.boot.starter.version>2.7.1</spring.boot.starter.version>
         <spring.security.test.version>5.6.3</spring.security.test.version>
         <spring.boot.starter.test.version>2.7.1</spring.boot.starter.test.version>
-        <testcontainers.version>1.17.2</testcontainers.version>  <!-- TODO: объединить версии? -->
-        <testcontainers.postgresql.version>1.17.2</testcontainers.postgresql.version>
+        <testcontainers.version>1.17.2</testcontainers.version>
         <testcontainers.junit.jupiter.version>1.17.3</testcontainers.junit.jupiter.version>
         <springdoc.openapi.ui.version>1.6.9</springdoc.openapi.ui.version>
 
@@ -273,7 +272,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>${testcontainers.postgresql.version}</version>
+            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

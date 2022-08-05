@@ -13,7 +13,7 @@ import lombok.With;
  * dto для отправления сущности authority в ответе.
  */
 @Data
-@Builder
+@Builder(toBuilder = true)
 @With
 @NoArgsConstructor
 @AllArgsConstructor

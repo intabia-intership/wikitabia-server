@@ -14,7 +14,7 @@ import lombok.With;
  * dto класс для создания пользователя.
  */
 @Data
-@Builder
+@Builder(toBuilder = true)
 @With
 @NoArgsConstructor
 @AllArgsConstructor

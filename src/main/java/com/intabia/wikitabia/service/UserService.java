@@ -1,4 +1,4 @@
-package com.intabia.wikitabia.services.service;
+package com.intabia.wikitabia.service;
 
 import com.intabia.wikitabia.dto.CreateUserDto;
 import com.intabia.wikitabia.dto.UpdateUserDto;
@@ -42,26 +42,9 @@ public interface UserService {
   UserDto getUser(UUID id);
 
   /**
-   * метод для авторизации. обращение из frontend.
-   *
-   * @param userName принимает логин пользователя
-   * @param userPassword  принимает пароль пользователя и хеширует его
-   * @return возвращает boolean нашлось ли совпадение в БД
-   */
-  UserDto authorization(String userName, String userPassword);
-
-  /**
    * назачение пользователю telegram-логина.
    *
    * @param user - пользователь, которому необходимо назначить telegram-логин
    */
   void addLogin(UserDto user);
-
-  /**
-   * получение пользователя по логину.
-   *
-   * @param login - логин пользователя
-   * @return возвращает найденного пользователя
-   */
-  UserDto findUserByLogin(String login);
 }

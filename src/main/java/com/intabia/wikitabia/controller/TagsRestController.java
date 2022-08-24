@@ -1,10 +1,9 @@
 package com.intabia.wikitabia.controller;
 
 import com.intabia.wikitabia.dto.TagDto;
+import com.intabia.wikitabia.service.TagsService;
 import java.util.List;
 import java.util.UUID;
-
-import com.intabia.wikitabia.service.TagsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;

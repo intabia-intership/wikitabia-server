@@ -328,7 +328,7 @@
         <module name="MissingJavadocMethod">
             <property name="scope" value="public"/>
             <property name="minLineCount" value="2"/>
-            <property name="allowedAnnotations" value="Override, Test"/>
+            <property name="allowedAnnotations" value="Override, Test, PostMapping, GetMapping, PutMapping, DeleteMapping"/>
             <property name="tokens" value="METHOD_DEF, CTOR_DEF, ANNOTATION_FIELD_DEF,
                                    COMPACT_CTOR_DEF"/>
         </module>
@@ -338,6 +338,7 @@
                       value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF,
                       RECORD_DEF, ANNOTATION_DEF"/>
             <property name="excludeScope" value="nothing"/>
+            <property name="skipAnnotations" value="RestController"/>
         </module>
         <module name="MethodName">
             <property name="format" value="^[a-z][a-z0-9][a-zA-Z0-9_]*$"/>

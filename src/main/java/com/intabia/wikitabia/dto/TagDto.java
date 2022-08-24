@@ -25,7 +25,7 @@ public class TagDto {
   @NonNull
   private String name;
   /**
-   * счетчик обращений к ресурсам с данным тегом
+   * счетчик обращений к ресурсам с данным тегом.
    */
   private Long ratingCount;
 

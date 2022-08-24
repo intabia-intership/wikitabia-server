@@ -1,0 +1,10 @@
+keycloak:
+  realm: wikitabia-realm
+  resource: wikitabia-server
+  auth-server-url: http://localhost:8484/auth
+  ssl-required: external
+  public-client: false
+  principal-attribute: preferred_name
+  credentials:
+    secret: zJDIc01GUSQS3cVahNhtZDO3w3pMCZB6
+  bearer-only: true

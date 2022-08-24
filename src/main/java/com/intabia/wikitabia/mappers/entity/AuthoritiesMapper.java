@@ -1,6 +1,7 @@
 package com.intabia.wikitabia.mappers.entity;
 
-import com.intabia.wikitabia.dto.AuthorityDto;
+import com.intabia.wikitabia.dto.authority.request.AuthorityRequestDto;
+import com.intabia.wikitabia.dto.authority.response.AuthorityResponseDto;
 import com.intabia.wikitabia.model.AuthorityEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
@@ -10,9 +11,10 @@ import org.mapstruct.MappingTarget;
  */
 @Mapper(componentModel = "spring")
 public interface AuthoritiesMapper {
-  AuthorityEntity dtoToEntity(AuthorityDto authorityDto);
+  AuthorityEntity dtoToEntity(AuthorityRequestDto authorityRequestDto);
 
-  AuthorityDto entityToDto(AuthorityEntity authorityEntity);
+  AuthorityResponseDto entityToDto(AuthorityEntity authorityEntity);
 
-  void updateEntity(@MappingTarget AuthorityEntity authorityEntity, AuthorityDto authorityDto);
+  void updateEntity(@MappingTarget AuthorityEntity authorityEntity,
+                    AuthorityRequestDto authorityRequestDto);
 }

@@ -1,10 +1,9 @@
 package com.intabia.wikitabia.controller;
 
 import com.intabia.wikitabia.dto.ResourceDto;
+import com.intabia.wikitabia.service.ResourceService;
 import java.util.List;
 import java.util.UUID;
-
-import com.intabia.wikitabia.service.ResourceService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

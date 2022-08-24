@@ -2,10 +2,9 @@ package com.intabia.wikitabia.controller;
 
 import com.intabia.wikitabia.dto.ResourceDto;
 import com.intabia.wikitabia.dto.TagDto;
-import java.util.List;
-
 import com.intabia.wikitabia.service.ResourceService;
 import com.intabia.wikitabia.service.TagsService;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

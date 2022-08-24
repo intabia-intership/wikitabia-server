@@ -1,19 +1,28 @@
-package com.intabia.wikitabia.service.Specifications;
+package com.intabia.wikitabia.service.specifications;
 
 import com.intabia.wikitabia.model.ResourceEntity;
 import com.intabia.wikitabia.model.ResourceEntity_;
 import com.intabia.wikitabia.model.TagEntity;
 import com.intabia.wikitabia.model.TagEntity_;
-import org.springframework.data.jpa.domain.Specification;
-
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.data.jpa.domain.Specification;
 
+/**
+ * спецификация для запросов к ресурсам.
+ */
 public class ResourcesQuerySpecifications {
 
+  /**
+   * фильтрация по названию ресурса и тэгам.
+   *
+   * @param name     - название ресурса
+   * @param tagsName - список тэгов
+   * @return возвращает спецификацию, фильтрующую ресурсы по названию и тэгам
+   */
   public static Specification<ResourceEntity> filter(String name, List<String> tagsName) {
     return (root, query, criteriaBuilder) -> {
       Predicate filterByName = criteriaBuilder.like(root.get(ResourceEntity_.NAME), name + "%");
@@ -31,7 +40,8 @@ public class ResourcesQuerySpecifications {
                                             CriteriaBuilder criteriaBuilder,
                                             List<String> tagsNames) {
     List<Predicate> predicateList = new ArrayList<>();
-    tagsNames.forEach(tagName -> predicateList.add(criteriaBuilder.equal(join.get(TagEntity_.NAME), tagName)));
+    tagsNames.forEach(
+        tagName -> predicateList.add(criteriaBuilder.equal(join.get(TagEntity_.NAME), tagName)));
     int size = predicateList.size();
     return criteriaBuilder.and(predicateList.toArray(new Predicate[size]));
   }

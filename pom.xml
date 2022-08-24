@@ -60,6 +60,8 @@
                     <encoding>UTF-8</encoding>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>true</failsOnError>
+                    <failOnViolation>true</failOnViolation>
+                    <violationSeverity>warning</violationSeverity>
                     <linkXRef>false</linkXRef>
                 </configuration>
                 <executions>
@@ -96,9 +98,17 @@
         <maven.compiler.target>11</maven.compiler.target>
         <lombok.version>1.18.24</lombok.version>
         <keycloak.starter.version>18.0.0</keycloak.starter.version>
-        <spring.security.test.version>5.7.1</spring.security.test.version>
-        <spring.security.starter.version>2.6.7</spring.security.starter.version>
+        <spring.boot.starter.security.version>2.7.1</spring.boot.starter.security.version>
+        <spring.boot.starter.web.version>2.7.1</spring.boot.starter.web.version>
+        <spring.boot.starter.data.jpa.version>2.7.1</spring.boot.starter.data.jpa.version>
+        <spring.boot.starter.version>2.7.1</spring.boot.starter.version>
+        <spring.security.test.version>5.6.3</spring.security.test.version>
+        <spring.boot.starter.test.version>2.7.1</spring.boot.starter.test.version>
+        <testcontainers.version>1.17.2</testcontainers.version>
+        <testcontainers.junit.jupiter.version>1.17.3</testcontainers.junit.jupiter.version>
         <springdoc.openapi.ui.version>1.6.9</springdoc.openapi.ui.version>
+        <logback.version>1.2.11</logback.version>
+        <slf4j.version>1.7.36</slf4j.version>
     </properties>
 
     <dependencies>
@@ -219,28 +229,33 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <version>2.6.7</version>
+            <version>${spring.boot.starter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>2.6.7</version>
+            <version>${spring.boot.starter.web.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <version>2.6.7</version>
+            <version>${spring.boot.starter.data.jpa.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>2.6.7</version>
+            <version>${spring.boot.starter.test.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-            <version>${spring.security.starter.version}</version>
+            <version>${spring.boot.starter.security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-spring-boot-starter</artifactId>
+            <version>${keycloak.starter.version}</version>
         </dependency>
 
         <dependency>
@@ -250,15 +265,44 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-spring-boot-starter</artifactId>
-            <version>${keycloak.starter.version}</version>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${testcontainers.junit.jupiter.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>${springdoc.openapi.ui.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
     </dependencies>
 </project>

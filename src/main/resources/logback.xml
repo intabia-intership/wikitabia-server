@@ -1,0 +1,42 @@
+<configuration debug="true">
+    <property name="LOG_FILE" value="wikitabia-server-logs" />
+    <property name="LOG_DIR" value="log" />
+    <property name="LOG_SIZE_CAP" value="3GB" />
+    <property name="LOGGER_NAME" value="com.intabia.wikitabia.logger" />
+    <property name="FILE_LOG_LEVEL" value="TRACE" />
+    <property name="CONSOLE_LOG_LEVEL" value="INFO" />
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${CONSOLE_LOG_LEVEL}</level>
+        </filter>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/${LOG_FILE}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/%d{yyyy/MM}/${LOG_FILE}.gz</fileNamePattern>
+            <totalSizeCap>${LOG_SIZE_CAP}</totalSizeCap>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${FILE_LOG_LEVEL}</level>
+        </filter>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{16} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="${LOGGER_NAME}" level="${CONSOLE_LOG_LEVEL}" additivity="false">
+        <appender-ref ref="CONSOLE" />
+    </logger>
+    <logger name="${LOGGER_NAME}" level="${FILE_LOG_LEVEL}" additivity="false">
+        <appender-ref ref="FILE" />
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>

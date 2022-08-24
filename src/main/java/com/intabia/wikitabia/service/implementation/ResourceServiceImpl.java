@@ -6,9 +6,10 @@ import com.intabia.wikitabia.mappers.entity.ResourcesMapper;
 import com.intabia.wikitabia.model.ResourceEntity;
 import com.intabia.wikitabia.model.UserEntity;
 import com.intabia.wikitabia.repository.ResourcesDao;
-import com.intabia.wikitabia.repository.UsersDao;
+import com.intabia.wikitabia.repository.TagsDao;
+import com.intabia.wikitabia.repository.UserDao;
 import com.intabia.wikitabia.service.ResourceService;
-import com.intabia.wikitabia.service.Specifications.ResourcesQuerySpecifications;
+import com.intabia.wikitabia.service.specifications.ResourcesQuerySpecifications;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +21,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 /**
  * реализация сервисного слоя для resources.
  */
@@ -30,7 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ResourceServiceImpl implements ResourceService {
   private final ResourcesMapper resourcesMapper;
   private final ResourcesDao resourcesDao;
-  private final UsersDao usersDao;
+  private final UserDao userDao;
+  private final TagsDao tagsDao;
 
   @Override
   public ResourceDto createResource(ResourceDto resourceDto) {
@@ -73,6 +74,11 @@ public class ResourceServiceImpl implements ResourceService {
         .map(resourcesMapper::entityToDto);
   }
 
+  /**
+   * увеличение рейтинга ресурса.
+   *
+   * @param id - id ресурса
+   */
   public void incrementRating(UUID id) {
     ResourceEntity resourceEntity = resourcesDao.findById(id)
         .orElseThrow(() -> new EntityNotFoundException(ResourceEntity.class, id));
@@ -93,7 +99,7 @@ public class ResourceServiceImpl implements ResourceService {
     ResourceEntity resourceEntity = resourcesMapper.dtoToEntity(resourceDto);
     resourceEntity.setCreatedAt(LocalDateTime.now());
     resourceEntity.setRatingCount(0L);
-    UserEntity userEntity = usersDao
+    UserEntity userEntity = userDao
         .findUserEntityByTelegramLogin(resourceDto.getCreator().getTelegramLogin())
         .orElse(null);
     resourceEntity.setCreator(userEntity);

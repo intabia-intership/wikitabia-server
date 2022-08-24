@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 
 /**
- * интерфейс для содежащий методы сервисного слоя Resources.
+ * интерфейс содержащий методы сервисного слоя Resources.
  */
 public interface ResourceService {
   ResourceDto createResource(ResourceDto resourceDto);
@@ -15,7 +15,8 @@ public interface ResourceService {
 
   void deleteResource(UUID id);
 
-  Page<ResourceDto> getResources(int page, int size, String sort, String filter, List<String> filterByTag);
+  Page<ResourceDto> getResources(int page, int size, String sort, String filter,
+                                 List<String> filterByTag);
 
   ResourceDto getResource(UUID id);
 

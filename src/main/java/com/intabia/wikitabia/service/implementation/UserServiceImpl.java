@@ -1,16 +1,16 @@
 package com.intabia.wikitabia.service.implementation;
 
-import com.intabia.wikitabia.dto.CreateUserDto;
-import com.intabia.wikitabia.dto.UpdateUserDto;
-import com.intabia.wikitabia.dto.UserDto;
+import com.intabia.wikitabia.dto.user.request.UserCreateRequestDto;
+import com.intabia.wikitabia.dto.user.request.UserUpdateRequestDto;
+import com.intabia.wikitabia.dto.user.response.UserResponseDto;
 import com.intabia.wikitabia.exception.EntityMustExistException;
 import com.intabia.wikitabia.exception.EntityNotFoundException;
 import com.intabia.wikitabia.exception.UniqueFieldException;
 import com.intabia.wikitabia.mappers.entity.UsersMapper;
 import com.intabia.wikitabia.model.AuthorityEntity;
 import com.intabia.wikitabia.model.UserEntity;
-import com.intabia.wikitabia.repository.AuthoritiesDao;
-import com.intabia.wikitabia.repository.UsersDao;
+import com.intabia.wikitabia.repository.AuthorityDao;
+import com.intabia.wikitabia.repository.UserDao;
 import com.intabia.wikitabia.service.UserService;
 import java.util.HashSet;
 import java.util.Set;
@@ -35,80 +35,89 @@ public class UserServiceImpl implements UserService {
       "Роль добавляемого пользователя";
 
   private final UsersMapper usersMapper;
-  private final UsersDao usersDao;
-  private final AuthoritiesDao authoritiesDao;
+  private final UserDao userDao;
+  private final AuthorityDao authorityDao;
   private final PasswordEncoder passwordEncoder;
 
   @Override
-  public UserDto createUser(CreateUserDto createUserDto) {
-    if (usersDao.existsByLogin(createUserDto.getLogin())) {
-      throw new UniqueFieldException(CreateUserDto.class, FRIENDLY_LOGIN_NAME,
-          createUserDto.getLogin());
-    }
-    Set<AuthorityEntity> authorities = new HashSet<>(createUserDto.getAuthorities().size());
-    for (String authorityName : createUserDto.getAuthorities()) {
-      AuthorityEntity authority = authoritiesDao.findAuthorityEntityByName(authorityName)
-          .orElseThrow(() -> new EntityMustExistException(CreateUserDto.class, FRIENDLY_ROLE_NAME,
-              authorityName));
-      authorities.add(authority);
+  public UserResponseDto createUser(UserCreateRequestDto userCreateRequestDto) {
+    if (userDao.existsByLogin(userCreateRequestDto.getLogin())) {
+      throw new UniqueFieldException(UserCreateRequestDto.class, FRIENDLY_LOGIN_NAME,
+          userCreateRequestDto.getLogin());
     }
 
-    UserEntity userEntity = usersMapper.dtoToEntity(createUserDto);
+    Set<AuthorityEntity> authorities = new HashSet<>(userCreateRequestDto.getAuthorities().size());
+    for (String authorityName : userCreateRequestDto.getAuthorities()) {
+      AuthorityEntity authority = authorityDao.findAuthorityEntityByName(authorityName)
+          .orElseThrow(
+              () -> new EntityMustExistException(UserCreateRequestDto.class, FRIENDLY_ROLE_NAME,
+                  authorityName));
+      authorities.add(authority);
+    }
+    UserEntity userEntity = usersMapper.dtoToEntity(userCreateRequestDto);
     userEntity.setAuthorities(authorities);
     String encodedPassword = passwordEncoder.encode(userEntity.getPassword());
     userEntity.setPassword(encodedPassword);
-    return usersMapper.entityToDto(usersDao.save(userEntity));
+    return usersMapper.entityToDto(userDao.save(userEntity));
   }
 
   @Override
-  public UserDto updateUser(UpdateUserDto updateUserDto, UUID id) {
-    UserEntity sameUser = usersDao.findUserEntityByLogin(updateUserDto.getLogin())
+  public UserResponseDto updateUser(UserUpdateRequestDto userUpdateRequestDto, UUID id) {
+    UserEntity sameUser = userDao.findUserEntityByLogin(userUpdateRequestDto.getLogin())
         .orElse(null);
     if (sameUser != null && !sameUser.getId().equals(id)) {
-      throw new UniqueFieldException(UpdateUserDto.class, FRIENDLY_LOGIN_NAME,
-          updateUserDto.getLogin());
+      throw new UniqueFieldException(UserUpdateRequestDto.class, FRIENDLY_LOGIN_NAME,
+          userUpdateRequestDto.getLogin());
     }
 
-    sameUser = usersDao.findUserEntityByTelegramLogin(updateUserDto.getTelegramLogin())
+    sameUser = userDao.findUserEntityByTelegramLogin(userUpdateRequestDto.getTelegramLogin())
         .orElse(null);
     if (sameUser != null && !sameUser.getId().equals(id)) {
-      throw new UniqueFieldException(UpdateUserDto.class, FRIENDLY_TELEGRAM_LOGIN_NAME,
-          updateUserDto.getTelegramLogin());
+      throw new UniqueFieldException(UserUpdateRequestDto.class, FRIENDLY_TELEGRAM_LOGIN_NAME,
+          userUpdateRequestDto.getTelegramLogin());
     }
 
-    UserEntity user = usersDao.findById(id)
+    UserEntity user = userDao.findById(id)
         .orElseThrow(() -> new EntityNotFoundException(UserEntity.class, id));
-    Set<AuthorityEntity> authorities = new HashSet<>(updateUserDto.getAuthorities().size());
-    for (String authorityName : updateUserDto.getAuthorities()) {
-      AuthorityEntity authority = authoritiesDao.findAuthorityEntityByName(authorityName)
-          .orElseThrow(() -> new EntityMustExistException(UpdateUserDto.class, FRIENDLY_ROLE_NAME,
-              authorityName));
+
+    Set<AuthorityEntity> authorities = new HashSet<>(userUpdateRequestDto.getAuthorities().size());
+    for (String authorityName : userUpdateRequestDto.getAuthorities()) {
+      AuthorityEntity authority = authorityDao.findAuthorityEntityByName(authorityName)
+          .orElseThrow(
+              () -> new EntityMustExistException(UserUpdateRequestDto.class, FRIENDLY_ROLE_NAME,
+                  authorityName));
       authorities.add(authority);
     }
-    usersMapper.updateEntity(user, updateUserDto);
+    usersMapper.updateEntity(user, userUpdateRequestDto);
     user.setAuthorities(authorities);
     String encodedPassword = passwordEncoder.encode(user.getPassword());
     user.setPassword(encodedPassword);
-    return usersMapper.entityToDto(usersDao.save(user));
+    return usersMapper.entityToDto(userDao.save(user));
   }
 
   @Override
-  public void deleteUser(UUID id) {
-    usersDao.deleteById(id);
+  public UUID deleteUser(UUID id) {
+    if (!userDao.existsById(id)) {
+      throw new EntityNotFoundException(UserEntity.class, id);
+    }
+
+    userDao.deleteById(id);
+    return id;
   }
 
   @Override
-  public UserDto getUser(UUID id) {
-    UserEntity userEntity = usersDao.findById(id)
+  public UserResponseDto getUser(UUID id) {
+    UserEntity userEntity = userDao.findById(id)
         .orElseThrow(() -> new EntityNotFoundException(UserEntity.class, id));
     return usersMapper.entityToDto(userEntity);
   }
 
   @Override
-  public void addLogin(UserDto user) {
-    UserEntity userEntity = usersDao.findById(user.getId())
-        .orElseThrow(() -> new EntityNotFoundException(UserEntity.class, user.getId()));
-    userEntity.setTelegramLogin(user.getTelegramLogin());
-    usersDao.save(userEntity);
+  public UserResponseDto addLogin(UserUpdateRequestDto userUpdateRequestDto, UUID id) {
+    UserEntity user = userDao.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException(UserEntity.class, id));
+
+    user.setTelegramLogin(user.getTelegramLogin());
+    return usersMapper.entityToDto(userDao.save(user));
   }
 }

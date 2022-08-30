@@ -44,9 +44,14 @@ services:
     container_name: wikitabia-server
     restart: always
     environment:
-      spring.datasource.url: "jdbc:postgresql://postgres:5432/${DB_NAME}"
-      spring.datasource.username: ${DB_USER}
-      spring.datasource.password: ${DB_PASS}
+      DB_ADDR: "jdbc:postgresql://postgres:5432/${DB_NAME}"
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      KEYCLOAK_REALM: ${KEYCLOAK_REALM}
+      KEYCLOAK_RESOURCE: ${KEYCLOAK_RESOURCE}
+      KEYCLOAK_URL: ${KEYCLOAK_URL}
+      KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
+      WIKITABIA_SERVER_URL: ${WIKITABIA_SERVER_URL}
     depends_on:
       - postgres
     networks:

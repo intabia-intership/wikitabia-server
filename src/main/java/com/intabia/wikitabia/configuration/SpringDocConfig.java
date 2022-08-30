@@ -30,10 +30,10 @@ public class SpringDocConfig {
   @Value("${wikitabia.server.url:http://localhost:8080}")
   private String serverUrl;
 
-  @Value("${wikitabia.keycloak.url:http://localhost:8484/auth}")
+  @Value("${keycloak.auth-server-url:http://localhost:8484/}")
   private String keycloakUrl;
 
-  @Value("${wikitabia.keycloak.realm:wikitabia-realm}")
+  @Value("${keycloak.realm:wikitabia-realm}")
   private String keycloakRealm;
 
   /**

@@ -4,9 +4,6 @@ server:
 
 
 spring:
-  profiles:
-    active: dev
-
   datasource:
     url: ${DB_ADDR}
     username: ${DB_USER}

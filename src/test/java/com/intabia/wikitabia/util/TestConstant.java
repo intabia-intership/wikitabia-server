@@ -105,4 +105,7 @@ public class TestConstant {
   public static UserResponseDto DEFAULT_USER_RESPONSE_DTO() {
     return DEFAULT_USER_RESPONSE_DTO.toBuilder().build();
   }
+
+  public static final String ENTITY_CLASS_USER_FRIENDLY_NAME = "Сущность с понятным для пользователя названием";
+  public static final String BEAN_CLASS_USER_FRIENDLY_NAME = "Бин с понятным для пользователя названием";
 }

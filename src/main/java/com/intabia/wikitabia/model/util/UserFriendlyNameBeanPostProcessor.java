@@ -14,36 +14,41 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class UserFriendlyNameBeanPostProcessor implements BeanPostProcessor {
+  private static final String CLASS_NOT_FOUND_FORMAT = "Класс %s не найден";
+
   @Override
-  public Object postProcessBeforeInitialization(Object bean, String beanName)
-      throws BeansException {
+  public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+    if (bean instanceof EntityManagerFactoryInfo) {
+      addEntitiesUserFriendlyNamesToDictionary((EntityManagerFactoryInfo) bean);
+    } else {
+      addUserFriendlyNameToDictionary(bean);
+    }
+
+    return bean;
+  }
+
+  private void addEntitiesUserFriendlyNamesToDictionary(EntityManagerFactoryInfo emf) {
+    PersistenceUnitInfo info = emf.getPersistenceUnitInfo();
+    if (info != null && info.getManagedClassNames() != null) {
+      for (String name : info.getManagedClassNames()) {
+        try {
+          Class<?> clazz = Class.forName(name);
+          UserFriendlyName userFriendlyName = clazz.getAnnotation(UserFriendlyName.class);
+          if (userFriendlyName != null) {
+            UserFriendlyNameTranslationTool.add(clazz.getSimpleName(), userFriendlyName.value());
+          }
+        } catch (ClassNotFoundException e) {
+          throw new RuntimeException(String.format(CLASS_NOT_FOUND_FORMAT, name));
+        }
+      }
+    }
+  }
+
+  private void addUserFriendlyNameToDictionary(Object bean) {
     UserFriendlyName userFriendlyName = bean.getClass().getAnnotation(UserFriendlyName.class);
     if (userFriendlyName != null) {
       UserFriendlyNameTranslationTool.add(bean.getClass().getSimpleName(),
           userFriendlyName.value());
     }
-    return bean;
-  }
-
-  @Override
-  public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-    if (bean instanceof EntityManagerFactoryInfo) {
-      EntityManagerFactoryInfo emf = (EntityManagerFactoryInfo) bean;
-      PersistenceUnitInfo info = emf.getPersistenceUnitInfo();
-      if (info != null && info.getManagedClassNames() != null) {
-        for (String name : info.getManagedClassNames()) {
-          try {
-            Class<?> clazz = Class.forName(name);
-            UserFriendlyName userFriendlyName = clazz.getAnnotation(UserFriendlyName.class);
-            if (userFriendlyName != null) {
-              UserFriendlyNameTranslationTool.add(clazz.getSimpleName(), userFriendlyName.value());
-            }
-          } catch (ClassNotFoundException e) {
-            throw new RuntimeException(String.format("Class %s not found", name));
-          }
-        }
-      }
-    }
-    return bean;
   }
 }

@@ -34,7 +34,7 @@ public class EntityNotFoundException extends FriendlyRuntimeException {
   public EntityNotFoundException(Class<?> entityClass, UUID entityId) {
     super(String.format(MESSAGE_FORMAT, entityClass.getName(), entityId),
         String.format(USER_FRIENDLY_MESSAGE_FORMAT,
-            UserFriendlyNameTranslationTool.getFriendlyName(entityClass)));
+            UserFriendlyNameTranslationTool.getUserFriendlyName(entityClass)));
     this.entityClassName = entityClass.getSimpleName();
     this.entityId = entityId;
   }

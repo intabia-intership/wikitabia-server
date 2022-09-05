@@ -28,7 +28,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.expression.WebExpressionVoter;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.savedrequest.NullRequestCache;
@@ -63,6 +62,7 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
   private final UserDetailsService userDetailsService;
   private final PasswordEncoder passwordEncoder;
+  private final DelegatingAuthenticationFailureHandler failureHandler;
 
   @Bean
   @Override
@@ -111,7 +111,7 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
           .authenticationEntryPoint(authenticationEntryPoint())
           .and()
         .formLogin()
-          .failureHandler(authenticationFailureHandler())
+          .failureHandler(failureHandler)
           .and()
         .sessionManagement()
           .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -133,7 +133,7 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     KeycloakAuthenticationProcessingFilter keycloakAuthenticationProcessingFilter =
         new KeycloakAuthenticationProcessingFilter(authenticationManagerBean(), requestMatcher);
     keycloakAuthenticationProcessingFilter
-        .setAuthenticationFailureHandler(authenticationFailureHandler());
+        .setAuthenticationFailureHandler(failureHandler);
     return keycloakAuthenticationProcessingFilter;
   }
 
@@ -141,10 +141,5 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   @Override
   protected AuthenticationEntryPoint authenticationEntryPoint() throws Exception {
     return new DelegatingKeycloakAuthenticationEntryPoint(adapterDeploymentContext());
-  }
-
-  @Bean
-  public AuthenticationFailureHandler authenticationFailureHandler() {
-    return new DelegatingAuthenticationFailureHandler();
   }
 }

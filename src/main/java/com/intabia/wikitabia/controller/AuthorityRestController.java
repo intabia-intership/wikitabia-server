@@ -1,5 +1,6 @@
 package com.intabia.wikitabia.controller;
 
+import com.intabia.wikitabia.controller.annotation.RequireAdmin;
 import com.intabia.wikitabia.dto.authority.request.AuthorityRequestDto;
 import com.intabia.wikitabia.dto.authority.response.AuthorityResponseDto;
 import com.intabia.wikitabia.service.AuthorityService;
@@ -12,7 +13,6 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,7 +34,7 @@ public class AuthorityRestController {
   @ApiResponse(responseCode = "200", description = "Роль создана")
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  @PreAuthorize("hasRole('ADMIN')")
+  @RequireAdmin
   public AuthorityResponseDto createAuthority(
       @RequestBody @Valid AuthorityRequestDto authorityRequestDto) {
     log.debug("Принят запрос на создание роли {}", authorityRequestDto);
@@ -46,7 +46,7 @@ public class AuthorityRestController {
   @Operation(summary = "Найти роль по id")
   @ApiResponse(responseCode = "200", description = "Роль найдена")
   @GetMapping("/{id}")
-  @PreAuthorize("hasRole('ADMIN')")
+  @RequireAdmin
   public AuthorityResponseDto getAuthority(
       @Parameter(description = "id роли, по которому выполняется поиск")
       @PathVariable UUID id) {
@@ -60,7 +60,7 @@ public class AuthorityRestController {
   @ApiResponse(responseCode = "200", description = "Роль изменена")
   @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  @PreAuthorize("hasRole('ADMIN')")
+  @RequireAdmin
   public AuthorityResponseDto updateAuthority(
       @RequestBody @Valid AuthorityRequestDto authorityRequestDto,
       @Parameter(description = "id роли, которую необходимо изменить")
@@ -74,7 +74,7 @@ public class AuthorityRestController {
   @Operation(summary = "Удалить роль по id")
   @ApiResponse(responseCode = "200", description = "Роль удалена")
   @DeleteMapping("/{id}")
-  @PreAuthorize("hasRole('ADMIN')")
+  @RequireAdmin
   public UUID deleteAuthority(
       @Parameter(description = "id роли, которую необходимо удалить")
       @PathVariable UUID id) {

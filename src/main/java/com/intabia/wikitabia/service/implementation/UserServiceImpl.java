@@ -3,6 +3,7 @@ package com.intabia.wikitabia.service.implementation;
 import com.intabia.wikitabia.dto.user.request.UserCreateRequestDto;
 import com.intabia.wikitabia.dto.user.request.UserUpdateRequestDto;
 import com.intabia.wikitabia.dto.user.response.UserResponseDto;
+import com.intabia.wikitabia.exception.UnexpectedException;
 import com.intabia.wikitabia.mappers.entity.UsersMapper;
 import com.intabia.wikitabia.model.AuthorityEntity;
 import com.intabia.wikitabia.model.UserEntity;
@@ -37,7 +38,8 @@ public class UserServiceImpl implements UserService {
 
     Set<AuthorityEntity> authorities = new HashSet<>(userCreateRequestDto.getAuthorities().size());
     for (String authorityName : userCreateRequestDto.getAuthorities()) {
-      authorities.add(authorityDao.findAuthorityEntityByName(authorityName).get());
+      authorities.add(authorityDao.findAuthorityEntityByName(authorityName)
+          .orElseThrow(UnexpectedException::new));
     }
     UserEntity userEntity = usersMapper.dtoToEntity(userCreateRequestDto);
     userEntity.setAuthorities(authorities);
@@ -50,7 +52,8 @@ public class UserServiceImpl implements UserService {
   public UserResponseDto getUser(UUID id) {
     userValidator.getUserValidate(id);
 
-    UserEntity userEntity = userDao.findById(id).get();
+    UserEntity userEntity = userDao.findById(id)
+        .orElseThrow(UnexpectedException::new);
     return usersMapper.entityToDto(userEntity);
   }
 
@@ -58,10 +61,12 @@ public class UserServiceImpl implements UserService {
   public UserResponseDto updateUser(UserUpdateRequestDto userUpdateRequestDto, UUID id) {
     userValidator.updateUserValidate(userUpdateRequestDto, id);
 
-    UserEntity user = userDao.findById(id).get();
+    UserEntity user = userDao.findById(id)
+        .orElseThrow(UnexpectedException::new);
     Set<AuthorityEntity> authorities = new HashSet<>(userUpdateRequestDto.getAuthorities().size());
     for (String authorityName : userUpdateRequestDto.getAuthorities()) {
-      authorities.add(authorityDao.findAuthorityEntityByName(authorityName).get());
+      authorities.add(authorityDao.findAuthorityEntityByName(authorityName)
+          .orElseThrow(UnexpectedException::new));
     }
     usersMapper.updateEntity(user, userUpdateRequestDto);
     user.setAuthorities(authorities);
@@ -82,7 +87,8 @@ public class UserServiceImpl implements UserService {
   public UserResponseDto addLogin(UserUpdateRequestDto userUpdateRequestDto, UUID id) {
     userValidator.addLoginValidate(userUpdateRequestDto, id);
 
-    UserEntity user = userDao.findById(id).get();
+    UserEntity user = userDao.findById(id)
+        .orElseThrow(UnexpectedException::new);
     user.setTelegramLogin(user.getTelegramLogin());
     return usersMapper.entityToDto(userDao.save(user));
   }

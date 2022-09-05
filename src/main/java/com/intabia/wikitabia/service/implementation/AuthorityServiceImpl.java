@@ -2,6 +2,7 @@ package com.intabia.wikitabia.service.implementation;
 
 import com.intabia.wikitabia.dto.authority.request.AuthorityRequestDto;
 import com.intabia.wikitabia.dto.authority.response.AuthorityResponseDto;
+import com.intabia.wikitabia.exception.UnexpectedException;
 import com.intabia.wikitabia.mappers.entity.AuthoritiesMapper;
 import com.intabia.wikitabia.model.AuthorityEntity;
 import com.intabia.wikitabia.repository.AuthorityDao;
@@ -34,7 +35,8 @@ public class AuthorityServiceImpl implements AuthorityService {
   public AuthorityResponseDto getAuthority(UUID id) {
     authorityValidator.getAuthorityValidate(id);
 
-    AuthorityEntity authority = authorityDao.findById(id).get();
+    AuthorityEntity authority = authorityDao.findById(id)
+        .orElseThrow(UnexpectedException::new);
     return authoritiesMapper.entityToDto(authority);
   }
 
@@ -42,7 +44,8 @@ public class AuthorityServiceImpl implements AuthorityService {
   public AuthorityResponseDto updateAuthority(AuthorityRequestDto authorityDto, UUID id) {
     authorityValidator.updateAuthorityValidate(authorityDto, id);
 
-    AuthorityEntity authority = authorityDao.findById(id).get();
+    AuthorityEntity authority = authorityDao.findById(id)
+        .orElseThrow(UnexpectedException::new);
     authoritiesMapper.updateEntity(authority, authorityDto);
     return authoritiesMapper.entityToDto(authorityDao.save(authority));
   }

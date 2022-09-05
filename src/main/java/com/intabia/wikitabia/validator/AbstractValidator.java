@@ -19,7 +19,4 @@ public abstract class AbstractValidator<O, I> implements Validator {
    * информация об объекте валидации.
    */
   protected final I info;
-
-  @Override
-  public abstract void validate();
 }

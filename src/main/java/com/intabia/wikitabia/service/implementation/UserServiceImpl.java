@@ -3,15 +3,14 @@ package com.intabia.wikitabia.service.implementation;
 import com.intabia.wikitabia.dto.user.request.UserCreateRequestDto;
 import com.intabia.wikitabia.dto.user.request.UserUpdateRequestDto;
 import com.intabia.wikitabia.dto.user.response.UserResponseDto;
-import com.intabia.wikitabia.exception.EntityMustExistException;
-import com.intabia.wikitabia.exception.EntityNotFoundException;
-import com.intabia.wikitabia.exception.UniqueFieldException;
+import com.intabia.wikitabia.exception.UnexpectedException;
 import com.intabia.wikitabia.mappers.entity.UsersMapper;
 import com.intabia.wikitabia.model.AuthorityEntity;
 import com.intabia.wikitabia.model.UserEntity;
 import com.intabia.wikitabia.repository.AuthorityDao;
 import com.intabia.wikitabia.repository.UserDao;
 import com.intabia.wikitabia.service.UserService;
+import com.intabia.wikitabia.validator.user.UserValidator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -27,13 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService {
-  private static final String FRIENDLY_LOGIN_NAME =
-      "Логин пользователя";
-  private static final String FRIENDLY_TELEGRAM_LOGIN_NAME =
-      "Логин пользователя в telegram";
-  private static final String FRIENDLY_ROLE_NAME =
-      "Роль добавляемого пользователя";
-
+  private final UserValidator userValidator;
   private final UsersMapper usersMapper;
   private final UserDao userDao;
   private final AuthorityDao authorityDao;
@@ -41,18 +34,12 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserResponseDto createUser(UserCreateRequestDto userCreateRequestDto) {
-    if (userDao.existsByLogin(userCreateRequestDto.getLogin())) {
-      throw new UniqueFieldException(UserCreateRequestDto.class, FRIENDLY_LOGIN_NAME,
-          userCreateRequestDto.getLogin());
-    }
+    userValidator.createUserValidate(userCreateRequestDto);
 
     Set<AuthorityEntity> authorities = new HashSet<>(userCreateRequestDto.getAuthorities().size());
     for (String authorityName : userCreateRequestDto.getAuthorities()) {
-      AuthorityEntity authority = authorityDao.findAuthorityEntityByName(authorityName)
-          .orElseThrow(
-              () -> new EntityMustExistException(UserCreateRequestDto.class, FRIENDLY_ROLE_NAME,
-                  authorityName));
-      authorities.add(authority);
+      authorities.add(authorityDao.findAuthorityEntityByName(authorityName)
+          .orElseThrow(UnexpectedException::new));
     }
     UserEntity userEntity = usersMapper.dtoToEntity(userCreateRequestDto);
     userEntity.setAuthorities(authorities);
@@ -62,31 +49,24 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserResponseDto updateUser(UserUpdateRequestDto userUpdateRequestDto, UUID id) {
-    UserEntity sameUser = userDao.findUserEntityByLogin(userUpdateRequestDto.getLogin())
-        .orElse(null);
-    if (sameUser != null && !sameUser.getId().equals(id)) {
-      throw new UniqueFieldException(UserUpdateRequestDto.class, FRIENDLY_LOGIN_NAME,
-          userUpdateRequestDto.getLogin());
-    }
+  public UserResponseDto getUser(UUID id) {
+    userValidator.getUserValidate(id);
 
-    sameUser = userDao.findUserEntityByTelegramLogin(userUpdateRequestDto.getTelegramLogin())
-        .orElse(null);
-    if (sameUser != null && !sameUser.getId().equals(id)) {
-      throw new UniqueFieldException(UserUpdateRequestDto.class, FRIENDLY_TELEGRAM_LOGIN_NAME,
-          userUpdateRequestDto.getTelegramLogin());
-    }
+    UserEntity userEntity = userDao.findById(id)
+        .orElseThrow(UnexpectedException::new);
+    return usersMapper.entityToDto(userEntity);
+  }
+
+  @Override
+  public UserResponseDto updateUser(UserUpdateRequestDto userUpdateRequestDto, UUID id) {
+    userValidator.updateUserValidate(userUpdateRequestDto, id);
 
     UserEntity user = userDao.findById(id)
-        .orElseThrow(() -> new EntityNotFoundException(UserEntity.class, id));
-
+        .orElseThrow(UnexpectedException::new);
     Set<AuthorityEntity> authorities = new HashSet<>(userUpdateRequestDto.getAuthorities().size());
     for (String authorityName : userUpdateRequestDto.getAuthorities()) {
-      AuthorityEntity authority = authorityDao.findAuthorityEntityByName(authorityName)
-          .orElseThrow(
-              () -> new EntityMustExistException(UserUpdateRequestDto.class, FRIENDLY_ROLE_NAME,
-                  authorityName));
-      authorities.add(authority);
+      authorities.add(authorityDao.findAuthorityEntityByName(authorityName)
+          .orElseThrow(UnexpectedException::new));
     }
     usersMapper.updateEntity(user, userUpdateRequestDto);
     user.setAuthorities(authorities);
@@ -97,26 +77,18 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UUID deleteUser(UUID id) {
-    if (!userDao.existsById(id)) {
-      throw new EntityNotFoundException(UserEntity.class, id);
-    }
+    userValidator.deleteUserValidate(id);
 
     userDao.deleteById(id);
     return id;
   }
 
   @Override
-  public UserResponseDto getUser(UUID id) {
-    UserEntity userEntity = userDao.findById(id)
-        .orElseThrow(() -> new EntityNotFoundException(UserEntity.class, id));
-    return usersMapper.entityToDto(userEntity);
-  }
-
-  @Override
   public UserResponseDto addLogin(UserUpdateRequestDto userUpdateRequestDto, UUID id) {
-    UserEntity user = userDao.findById(id)
-        .orElseThrow(() -> new EntityNotFoundException(UserEntity.class, id));
+    userValidator.addLoginValidate(userUpdateRequestDto, id);
 
+    UserEntity user = userDao.findById(id)
+        .orElseThrow(UnexpectedException::new);
     user.setTelegramLogin(user.getTelegramLogin());
     return usersMapper.entityToDto(userDao.save(user));
   }

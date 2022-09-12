@@ -1,6 +1,8 @@
 package com.intabia.wikitabia.controller;
 
 import com.intabia.wikitabia.controller.annotation.NoSecurityRequirements;
+import com.intabia.wikitabia.controller.annotation.RequireAdmin;
+import com.intabia.wikitabia.controller.annotation.RequireAdminOrUser;
 import com.intabia.wikitabia.dto.user.request.UserCreateRequestDto;
 import com.intabia.wikitabia.dto.user.request.UserUpdateRequestDto;
 import com.intabia.wikitabia.dto.user.response.UserResponseDto;
@@ -47,6 +49,7 @@ public class UserRestController {
   @Operation(summary = "Получить пользователя по id")
   @ApiResponse(responseCode = "200", description = "Пользователь найден")
   @GetMapping("/user/{id}")
+  @RequireAdminOrUser
   public UserResponseDto getUser(
       @Parameter(description = "id пользователя, по которому выполняется поиск")
       @PathVariable UUID id) {
@@ -60,6 +63,7 @@ public class UserRestController {
   @ApiResponse(responseCode = "200", description = "Пользователь изменен")
   @PutMapping(value = "/user/{id}", consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
+  @RequireAdmin
   public UserResponseDto updateUser(
       @RequestBody @Valid UserUpdateRequestDto userUpdateRequestDto,
       @Parameter(description = "id пользователя, которого необходимо изменить")
@@ -73,6 +77,7 @@ public class UserRestController {
   @Operation(summary = "Удалить пользователя по id")
   @ApiResponse(responseCode = "200", description = "Пользователь удален")
   @DeleteMapping("/user/{id}")
+  @RequireAdmin
   public UUID deleteUser(
       @Parameter(description = "id пользователя, которого необходимо удалить")
       @PathVariable UUID id) {
@@ -87,6 +92,7 @@ public class UserRestController {
   @NoSecurityRequirements
   @PutMapping(value = "/telegram-login/{id}", consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
+  @RequireAdminOrUser
   public UserResponseDto addTelegramLogin(@RequestBody UserUpdateRequestDto user,
                                           @PathVariable UUID id) {
     log.debug("Принят запрос на назначение логина в телеграм пользователю {} с id {}",

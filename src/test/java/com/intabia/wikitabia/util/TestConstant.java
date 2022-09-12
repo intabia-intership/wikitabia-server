@@ -21,6 +21,7 @@ public class TestConstant {
   public static final String GET_USER_ENDPOINT = "/api/user/{id}";
   public static final String UPDATE_USER_ENDPOINT = "/api/user/{id}";
   public static final String DELETE_USER_ENDPOINT = "/api/user/{id}";
+  public static final String ADD_LOGIN_ENDPOINT = "/api/telegram-login/{id}";
 
   public static final String ENTITY_STILL_EXIST = "Сущность все еще находится в базе данных";
 

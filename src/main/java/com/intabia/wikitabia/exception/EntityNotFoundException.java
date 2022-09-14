@@ -1,6 +1,6 @@
 package com.intabia.wikitabia.exception;
 
-import com.intabia.wikitabia.model.util.EntityNameTranslationTool;
+import com.intabia.wikitabia.model.util.UserFriendlyNameTranslationTool;
 import java.util.UUID;
 import lombok.Getter;
 
@@ -34,7 +34,7 @@ public class EntityNotFoundException extends FriendlyRuntimeException {
   public EntityNotFoundException(Class<?> entityClass, UUID entityId) {
     super(String.format(MESSAGE_FORMAT, entityClass.getName(), entityId),
         String.format(USER_FRIENDLY_MESSAGE_FORMAT,
-            EntityNameTranslationTool.getRussianName(entityClass)));
+            UserFriendlyNameTranslationTool.getUserFriendlyName(entityClass)));
     this.entityClassName = entityClass.getSimpleName();
     this.entityId = entityId;
   }

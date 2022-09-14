@@ -1,5 +1,6 @@
 package com.intabia.wikitabia.model;
 
+import com.intabia.wikitabia.model.annotation.UserFriendlyName;
 import java.util.Set;
 import java.util.UUID;
 import javax.persistence.Column;
@@ -21,6 +22,7 @@ import lombok.With;
  * Entity для работы с users.
  */
 @Entity
+@UserFriendlyName("Пользователь")
 @Table(name = "users")
 @Data
 @Builder(toBuilder = true)
